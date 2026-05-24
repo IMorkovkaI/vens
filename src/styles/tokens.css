@@ -1,0 +1,57 @@
+/* Frontend Design tokens В· Bureau Atlas Soft */
+:root {
+  --color-paper: oklch(98% 0.012 88);
+  --color-paper-2: oklch(95.5% 0.016 88);
+  --color-paper-3: oklch(90.5% 0.018 88);
+  --color-panel: oklch(99.4% 0.006 88);
+  --color-ink: oklch(19% 0.023 248);
+  --color-ink-soft: oklch(40% 0.029 248);
+  --color-ink-faint: oklch(58% 0.028 248);
+  --color-charcoal: oklch(22% 0.027 248);
+  --color-rule: oklch(82% 0.022 88);
+  --color-rule-strong: oklch(62% 0.03 248);
+  --color-accent: oklch(46% 0.1 244);
+  --color-accent-2: oklch(61% 0.118 232);
+  --color-accent-ink: oklch(31% 0.083 244);
+  --color-accent-soft: oklch(93% 0.038 238);
+  --color-success: oklch(40% 0.11 160);
+  --color-warning: oklch(54% 0.13 78);
+  --color-danger: oklch(44% 0.15 25);
+
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-body: Manrope, "Aptos", "Segoe UI", sans-serif;
+  --font-mono: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
+
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-display-s: 3.25rem;
+  --text-display: 4.4rem;
+
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.625rem;
+  --radius-pill: 999px;
+
+  --rule-thin: 1px;
+  --rule-strong: 2px;
+  --dur-fast: 150ms;
+  --dur-med: 260ms;
+  --dur-slow: 520ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}

@@ -5,11 +5,24 @@
 /tmp
 /out-tsc
 /bazel-out
+/generated/prisma
 
-# Node
+# Dependencies
 /node_modules
-npm-debug.log
-yarn-error.log
+
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+src/environments/.env
+src/environments/.env.*
+!src/environments/.env.example
 
 # IDEs and editors
 .idea/
@@ -29,6 +42,23 @@ yarn-error.log
 !.vscode/mcp.json
 .history/*
 
+# Local tool state
+.hallmark/
+.vercel/
+.netlify/
+.railway/
+supabase/.branches/
+supabase/.temp/
+supabase/.env
+supabase/.env.*
+supabase/.env.keys
+supabase/.env.local
+supabase/.env.*.local
+
+# Logs
+*.log
+.dev-server*.log
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/
@@ -38,6 +68,9 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+playwright-report/
+test-results/
+.nyc_output/
 
 # System files
 .DS_Store

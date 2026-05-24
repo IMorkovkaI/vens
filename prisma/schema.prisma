@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  // Prisma 7 keeps connection URLs in prisma.config.ts.
+  // Do not add url/directUrl here; DATABASE_URL is runtime, DIRECT_URL is for CLI migrations.
+  provider = "postgresql"
+}
+
+enum DashboardRole {
+  USER
+  DEVELOPER
+  ADMIN
+}
+
+enum AiProvider {
+  MOCK
+  OLLAMA
+  GROQ
+  OPENROUTER
+  GOOGLE
+}
+
+enum DiscoveryCandidateStatus {
+  NEW
+  REVIEWING
+  ACCEPTED
+  REJECTED
+  ANALYZED
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  companies Company[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([slug])
+}
+
+model Company {
+  id             String             @id @default(cuid())
+  slug           String             @unique
+  name           String
+  description    String
+  website        String
+  tags           String[]
+  aiSummary      String
+  seoDescription String
+  categoryId     String
+  category       Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  analyses       AiAnalysisResult[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([categoryId])
+  @@index([slug])
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  passwordHash String
+  role         DashboardRole @default(USER)
+  sessions     Session[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([email])
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  issuedAt  DateTime  @default(now())
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([tokenHash])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model AiAnalysisResult {
+  id             String     @id @default(cuid())
+  url            String     @unique
+  hostname       String
+  provider       AiProvider @default(MOCK)
+  model          String
+  confidence     Float      @default(0.85)
+  companyId      String?
+  company        Company?   @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  generatedName  String
+  generatedData  Json
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([hostname])
+  @@index([companyId])
+}
+
+model DiscoveryCandidate {
+  id            String                   @id @default(cuid())
+  url           String                   @unique
+  title         String
+  snippet       String
+  provider      String
+  query         String
+  status        DiscoveryCandidateStatus @default(NEW)
+  analysisUrl   String?
+  reviewerEmail String?
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+
+  @@index([status])
+  @@index([provider])
+  @@index([createdAt])
+}

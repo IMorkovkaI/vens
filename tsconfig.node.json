@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./out-tsc/node",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "prisma.config.ts",
+    "prisma/**/*.ts"
+  ]
+}

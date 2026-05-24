@@ -1,59 +1,130 @@
 # Vensight
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
+Vensight is an Angular SSR business directory with a Node.js API, Prisma/PostgreSQL persistence, dashboard listing tools, and AI-assisted company analysis.
 
-## Development server
+## Current MVP
 
-To start a local development server, run:
+- Public homepage, company listing, category pages, company detail pages, compare page, legal pages, and data-source notes.
+- Dashboard authentication with user, developer, and admin roles.
+- Admin/developer listing create and edit flow.
+- Content-aware HTTPS URL analysis with mock, Ollama, Groq, OpenRouter, and Google provider abstractions.
+- Prisma-backed directory, auth sessions, AI analysis cache, and optional discovery candidate storage.
+- Search discovery is available behind `SEARCH_PROVIDER=searchapi` or `tavily`, but stays disabled by default.
 
-```bash
-ng serve
-```
+## Requirements
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- Node.js 24.14
+- npm 11.9
+- PostgreSQL for persistent local development, or Supabase for hosted PostgreSQL
+- Optional Docker Desktop for one-command local stack startup
+- Optional Ollama and Qwen2.5 7B for local AI testing
 
-## Code scaffolding
+## Environment
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+Copy the example env file and fill in local values:
 
 ```bash
-ng build
+copy src\environments\.env.example src\environments\.env
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+The app loads `src/environments/.env` first. Keep real `.env` files out of git.
 
-## Running unit tests
+Local PostgreSQL examples use `vensight_db`. Product copy uses `Vensight`; package, Angular project, build output, containers, and local infrastructure use lowercase `vensight`.
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Check configuration without printing secrets:
 
 ```bash
-ng test
+npm run env:check
 ```
 
-## Running end-to-end tests
+## Local Development
 
-For end-to-end (e2e) testing, run:
+Install dependencies:
 
 ```bash
-ng e2e
+npm install
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Validate Prisma:
 
-## Additional Resources
+```bash
+npm run prisma:validate
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Apply local migrations and seed data:
+
+```bash
+npm run prisma:migrate:dev
+npm run prisma:seed
+```
+
+Run Angular dev server:
+
+```bash
+npm start
+```
+
+For the built SSR/API server:
+
+```bash
+npm run build
+npm run serve:ssr:vensight
+```
+
+Open `http://localhost:4000`.
+
+## Docker
+
+Run the full local stack:
+
+```bash
+docker compose up --build
+```
+
+This starts PostgreSQL, applies migrations, seeds data, builds the app, and serves it at `http://localhost:4000`.
+
+Stop the stack:
+
+```bash
+docker compose down
+```
+
+Reset Docker database volume:
+
+```bash
+docker compose down -v
+```
+
+## Useful Commands
+
+```bash
+npm run typecheck
+npm run test
+npm run build
+npm run prisma:validate
+npm run prisma:migrate:status
+npm run env:check
+npm run supabase:version
+```
+
+Supabase CLI workflows are documented in [docs/supabase-cli.md](docs/supabase-cli.md). Prisma migrations remain the app schema source of truth.
+
+## Deployment Shape
+
+The planned production split is:
+
+- Vercel for the Angular frontend/SSR surface.
+- Northflank for the Node.js API host.
+- Supabase for PostgreSQL.
+
+When splitting frontend and backend, keep provider keys and Prisma credentials on the backend only. Configure Vercel rewrites for `/api/*` once the Northflank backend URL is final.
+
+This repo includes:
+
+- `vercel.json` with a placeholder `/api/*` rewrite.
+- Dockerfile-based backend deployment for Northflank with `/api/health` checks.
+- Docker Compose for a local PostgreSQL-backed app stack.
+
+Replace the placeholder Northflank host in `vercel.json` before production traffic uses Vercel.
+
+See [docs/deployment.md](docs/deployment.md) and [docs/manual-setup.md](docs/manual-setup.md) for the current deployment checklist.

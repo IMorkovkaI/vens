@@ -1,0 +1,13 @@
+.angular
+.git
+.vscode
+dist
+generated/prisma
+node_modules
+npm-debug.log
+.dev-server*.log
+.dev-server*.err.log
+coverage
+.env
+src/environments/.env
+src/environmetns/.env
