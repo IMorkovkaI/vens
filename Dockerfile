@@ -8,7 +8,6 @@ FROM deps AS build
 
 WORKDIR /app
 COPY . .
-RUN npm run prisma:generate
 RUN npm run build
 
 FROM node:24-alpine AS runner

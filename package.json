@@ -4,10 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run prisma:generate && ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "typecheck": "tsc --build --pretty false",
+    "test": "npm run prisma:generate && ng test",
+    "typecheck": "npm run prisma:generate && tsc --build --pretty false",
     "serve:ssr:vensight": "node dist/vensight/server/server.mjs",
     "env:check": "tsx scripts/check-env.ts",
     "prisma:generate": "prisma generate",

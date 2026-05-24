@@ -51,6 +51,8 @@ Validate Prisma:
 npm run prisma:validate
 ```
 
+`npm run build`, `npm run test`, and `npm run typecheck` run `prisma generate` first so clean CI/Vercel builds have the ignored generated client available.
+
 Apply local migrations and seed data:
 
 ```bash

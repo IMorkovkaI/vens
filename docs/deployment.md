@@ -9,6 +9,7 @@
 ## Docker
 
 The Docker image builds the Angular SSR app and runs the Express server from `dist/vensight/server/server.mjs`.
+The app build runs `prisma generate` first because `generated/prisma` is intentionally ignored from git.
 
 ```bash
 docker build -t vensight .
