@@ -36,7 +36,7 @@ import { AuthService } from '../../../core/auth/auth.service';
           </div>
 
           @if (errorMessage()) {
-            <div class="mt-5 status-error">
+            <div class="mt-5 status-error" role="alert">
               {{ errorMessage() }}
             </div>
           }
@@ -49,7 +49,7 @@ import { AuthService } from '../../../core/auth/auth.service';
             >
               {{ isSubmitting() ? 'Creating...' : 'Create account' }}
             </button>
-            <a routerLink="/dashboard/login" class="text-link focus-ring">
+            <a routerLink="/dashboard/login" class="return-link focus-ring">
               Back to sign in
             </a>
           </div>

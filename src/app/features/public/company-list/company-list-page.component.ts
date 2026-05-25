@@ -18,10 +18,10 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
           <div>
             <h1 class="text-4xl font-semibold text-slate-950">Browse companies</h1>
             <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-              Search the starter directory by company, category, summary, and tags.
+              Search the directory by company, category, summary, and tags.
             </p>
           </div>
-          <a routerLink="/" class="text-link focus-ring">
+          <a routerLink="/" class="return-link focus-ring">
             Back to home
           </a>
         </div>
@@ -30,56 +30,58 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
 
     <section class="page-visual-band visual-bg-companies">
       <div class="mx-auto max-w-7xl px-6 py-8 lg:px-8">
-        <div class="grid gap-4 surface-card p-4 lg:grid-cols-[1fr_auto] lg:items-end">
-          <label class="block">
-            <span class="text-sm font-semibold text-slate-900">Search</span>
-            <input
-              class="form-input"
-              type="search"
-              [ngModel]="query()"
-              (ngModelChange)="onQueryChange($event)"
-              placeholder="Search companies, tags, or summaries"
-            />
-          </label>
+        <div class="directory-search-panel">
+          <div class="directory-search-row">
+            <label class="block">
+              <span class="text-sm font-semibold text-slate-900">Search</span>
+              <input
+                class="form-input"
+                type="search"
+                [ngModel]="query()"
+                (ngModelChange)="onQueryChange($event)"
+                placeholder="Search companies, tags, or summaries"
+              />
+            </label>
 
-          <div>
-            <p class="text-sm font-semibold text-slate-900">Category</p>
-            <div class="mt-2 flex flex-wrap gap-2">
-              <button
-                type="button"
-                class="filter-chip focus-ring"
-                [class.filter-chip-active]="!categorySlug()"
-                (click)="setCategory('')"
-              >
-                All
-              </button>
-              @for (category of categories(); track category.id) {
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Category</p>
+              <div class="mt-2 flex flex-wrap gap-2">
                 <button
                   type="button"
                   class="filter-chip focus-ring"
-                  [class.filter-chip-active]="categorySlug() === category.slug"
-                  (click)="setCategory(category.slug)"
+                  [class.filter-chip-active]="!categorySlug()"
+                  (click)="setCategory('')"
                 >
-                  {{ category.name }}
+                  All
                 </button>
-              }
+                @for (category of categories(); track category.id) {
+                  <button
+                    type="button"
+                    class="filter-chip focus-ring"
+                    [class.filter-chip-active]="categorySlug() === category.slug"
+                    (click)="setCategory(category.slug)"
+                  >
+                    {{ category.name }}
+                  </button>
+                }
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="mt-6 flex items-center justify-between gap-4">
-          <p class="text-sm text-slate-600">
-            @if (!isLoading() && !hasError()) {
-              {{ companies().length }} result{{ companies().length === 1 ? '' : 's' }}
-            } @else {
-              Directory results
+          <div class="directory-search-meta">
+            <p class="text-sm font-semibold text-slate-600">
+              @if (!isLoading() && !hasError()) {
+                {{ companies().length }} result{{ companies().length === 1 ? '' : 's' }} matched
+              } @else {
+                Directory results
+              }
+            </p>
+            @if (query() || categorySlug()) {
+              <button type="button" class="btn-subtle focus-ring" (click)="clearFilters()">
+                Clear filters
+              </button>
             }
-          </p>
-          @if (query() || categorySlug()) {
-            <button type="button" class="text-link focus-ring" (click)="clearFilters()">
-              Clear filters
-            </button>
-          }
+          </div>
         </div>
 
         @if (isLoading()) {
@@ -89,13 +91,18 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
             }
           </div>
         } @else if (hasError()) {
-          <div class="mt-6 status-error">
+          <div class="mt-6 status-error" role="alert">
             Companies could not be loaded. Please try again.
           </div>
         } @else if (!companies().length) {
           <div class="mt-6 empty-state p-10">
             <h2 class="text-lg font-semibold text-slate-950">No companies found</h2>
-            <p class="mt-2 text-sm text-slate-600">Try a different search term or category.</p>
+            <p class="mt-2 text-sm text-slate-600">
+              Try a broader term, clear the category filter, or search for workflows like analytics, security, or operations.
+            </p>
+            <button type="button" class="btn-secondary focus-ring mt-5" (click)="clearFilters()">
+              Reset search
+            </button>
           </div>
         } @else {
           <div class="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">

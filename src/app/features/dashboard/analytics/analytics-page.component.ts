@@ -9,7 +9,7 @@ import { DirectoryAnalytics } from '../../../core/analytics/dashboard-analytics.
   template: `
     <section class="page-hero page-hero-media hero-bg-dashboard-app">
       <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <a routerLink="/dashboard" class="text-link focus-ring">
+        <a routerLink="/dashboard" class="return-link focus-ring">
           Back to dashboard
         </a>
         <p class="mt-6 eyebrow">Analytics</p>
@@ -28,7 +28,7 @@ import { DirectoryAnalytics } from '../../../core/analytics/dashboard-analytics.
           }
         </div>
       } @else if (hasError()) {
-        <div class="status-error">
+        <div class="status-error" role="alert">
           Analytics could not be loaded.
         </div>
       } @else {

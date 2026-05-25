@@ -27,6 +27,26 @@ describe('CompanyDirectoryService', () => {
     expect(resultCount).toBeGreaterThan(0);
   });
 
+  it('should include at least four mock companies for every category', async () => {
+    const [categories, companies] = await Promise.all([
+      firstValueFrom(service.getCategories()),
+      firstValueFrom(service.getCompanies()),
+    ]);
+    const companyCountsByCategory = new Map<string, number>();
+
+    for (const company of companies) {
+      const categorySlug = company.category.slug;
+      companyCountsByCategory.set(
+        categorySlug,
+        (companyCountsByCategory.get(categorySlug) ?? 0) + 1,
+      );
+    }
+
+    expect(
+      categories.every((category) => (companyCountsByCategory.get(category.slug) ?? 0) >= 4),
+    ).toBe(true);
+  });
+
   it('should filter companies by category and search text', async () => {
     const companies = await firstValueFrom(
       service.searchCompanies({ query: 'feedback', categorySlug: 'ai-tools' }),

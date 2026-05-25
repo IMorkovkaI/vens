@@ -8,6 +8,8 @@ import {
   resetDirectoryRepositoryForTests,
 } from './directory-repository';
 import { CompanyFormData } from '../../app/core/company-directory/company-directory.models';
+import { COMPANY_FIXTURES } from '../../app/core/company-directory/company-directory.fixtures';
+import { DIRECTORY_CATEGORIES } from '../../app/core/company-directory/company-taxonomy';
 
 const originalDatabaseUrl = process.env['DATABASE_URL'];
 
@@ -56,7 +58,9 @@ describe('in-memory directory repository contract', () => {
       name: 'AI Tools',
       slug: 'ai-tools',
     });
-    await expect(repository.listCompanies()).resolves.toHaveLength(6);
+    await expect(repository.listCompanies()).resolves.toHaveLength(
+      COMPANY_FIXTURES.length,
+    );
   });
 
   it('filters companies by query text and category slug', async () => {
@@ -108,18 +112,25 @@ describe('in-memory directory repository contract', () => {
   it('computes directory analytics from repository data', async () => {
     const repository = createInMemoryDirectoryRepository();
     const analytics = await repository.getDirectoryAnalytics();
+    const firstCategorySlug = DIRECTORY_CATEGORIES[0].slug;
+    const firstCategoryFixtureCount = COMPANY_FIXTURES.filter(
+      (company) => company.categorySlug === firstCategorySlug,
+    ).length;
+    const firstCategoryPercentage = Math.round(
+      (firstCategoryFixtureCount / COMPANY_FIXTURES.length) * 100,
+    );
 
     expect(analytics).toMatchObject({
-      listingCount: 6,
-      aiSummaryCount: 6,
-      seoDescriptionCount: 6,
+      listingCount: COMPANY_FIXTURES.length,
+      aiSummaryCount: COMPANY_FIXTURES.length,
+      seoDescriptionCount: COMPANY_FIXTURES.length,
       aiCoverage: 100,
       seoReadiness: 100,
-      categoryCount: 4,
+      categoryCount: DIRECTORY_CATEGORIES.length,
     });
     expect(analytics.categoryMetrics[0]).toMatchObject({
-      count: 2,
-      percentage: 33,
+      count: firstCategoryFixtureCount,
+      percentage: firstCategoryPercentage,
     });
   });
 });

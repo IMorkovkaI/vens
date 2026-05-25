@@ -48,7 +48,7 @@ import { AuthService } from '../../../core/auth/auth.service';
           </div>
 
           @if (errorMessage()) {
-            <div class="mt-5 status-error">
+            <div class="mt-5 status-error" role="alert">
               {{ errorMessage() }}
             </div>
           }
@@ -67,7 +67,7 @@ import { AuthService } from '../../../core/auth/auth.service';
           </div>
 
           <div class="mt-4">
-            <a routerLink="/" class="text-link focus-ring">
+            <a routerLink="/" class="return-link focus-ring">
               Return to public site
             </a>
           </div>

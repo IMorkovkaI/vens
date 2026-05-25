@@ -47,7 +47,7 @@ describe('CategoryDetailPageComponent', () => {
 
     expect(fixture.nativeElement.textContent).toContain('AI Tools');
     expect(fixture.nativeElement.textContent).toContain('NovaLens');
-    expect(fixture.nativeElement.textContent).toContain('1 result');
+    expect(fixture.nativeElement.textContent).toContain('1 profile');
   });
 
   it('should render a not-found state for unknown categories', async () => {

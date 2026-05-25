@@ -41,7 +41,8 @@ describe('HomePageComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Business directory with AI context');
+    expect(compiled.textContent).toContain('Premium company intelligence directory');
+    expect(compiled.textContent).toContain('Vensight index');
     expect(compiled.textContent).toContain('Featured companies');
     expect(compiled.textContent).toContain('NovaLens');
   });

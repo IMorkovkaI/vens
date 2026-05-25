@@ -8,7 +8,9 @@ import { Company } from '../../core/company-directory/company-directory.models';
   template: `
     <article class="company-card group h-full surface-card p-5 pt-6">
       <div class="flex items-start justify-between gap-4">
-        <div>
+        <div class="flex min-w-0 items-start gap-3">
+          <span class="category-icon shrink-0" aria-hidden="true">{{ companyInitials() }}</span>
+          <div class="min-w-0">
           <a [routerLink]="['/categories', company.category.slug]" class="eyebrow focus-ring rounded-sm text-xs">
             {{ company.category.name }}
           </a>
@@ -17,8 +19,12 @@ import { Company } from '../../core/company-directory/company-directory.models';
               {{ company.name }}
             </a>
           </h3>
+          <p class="mt-1 truncate text-xs font-bold uppercase text-slate-500">
+            {{ domainLabel() }}
+          </p>
+          </div>
         </div>
-        <span class="pill-outline">Profile</span>
+        <span class="pill-outline shrink-0">Profile</span>
       </div>
 
       <p class="mt-4 text-sm leading-6 text-slate-600">
@@ -41,4 +47,21 @@ import { Company } from '../../core/company-directory/company-directory.models';
 })
 export class CompanyCardComponent {
   @Input({ required: true }) company!: Company;
+
+  protected companyInitials(): string {
+    return this.company.name
+      .split(/\s+/)
+      .map((part) => part.charAt(0))
+      .join('')
+      .slice(0, 2)
+      .toUpperCase();
+  }
+
+  protected domainLabel(): string {
+    try {
+      return new URL(this.company.website).hostname.replace(/^www\./, '');
+    } catch {
+      return this.company.website;
+    }
+  }
 }

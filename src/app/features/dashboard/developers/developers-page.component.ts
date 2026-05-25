@@ -10,7 +10,7 @@ import { AuthService } from '../../../core/auth/auth.service';
   template: `
     <section class="page-hero page-hero-media hero-bg-dashboard-app">
       <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <a routerLink="/dashboard" class="text-link focus-ring">
+        <a routerLink="/dashboard" class="return-link focus-ring">
           Back to dashboard
         </a>
         <p class="mt-6 eyebrow">Admin tools</p>
@@ -48,7 +48,7 @@ import { AuthService } from '../../../core/auth/auth.service';
           }
 
           @if (errorMessage()) {
-            <div class="mt-5 status-error">
+            <div class="mt-5 status-error" role="alert">
               {{ errorMessage() }}
             </div>
           }

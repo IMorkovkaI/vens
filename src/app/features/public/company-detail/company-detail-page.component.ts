@@ -16,7 +16,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
       </section>
     } @else if (hasError()) {
       <section class="mx-auto max-w-3xl px-6 py-16 text-center lg:px-8">
-        <div class="status-error p-8">
+        <div class="status-error p-8" role="alert">
           This company profile could not be loaded.
         </div>
       </section>
@@ -34,7 +34,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
     } @else {
       <section class="page-hero page-hero-media hero-bg-companies">
         <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-          <a routerLink="/companies" class="text-link focus-ring">
+          <a routerLink="/companies" class="return-link focus-ring">
             Back to companies
           </a>
           <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_340px] lg:items-start">

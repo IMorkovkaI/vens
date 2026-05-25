@@ -101,6 +101,8 @@ PUBLIC_SITE_URL="https://vensight.com"
 
 If Vercel hosts Angular SSR while Northflank hosts `/api`, set the `/api/*` rewrite in `vercel.json` before testing dashboard flows. If a preview deployment needs API access, add that exact preview origin to Northflank `ALLOWED_ORIGINS`.
 
+Dashboard login on Vercel depends on Northflank being live. The browser calls `/api/auth/login`, Vercel rewrites that request to Northflank, and Northflank validates the user against Supabase/Prisma sessions. If the rewrite still contains the placeholder host, or Northflank is missing `DATABASE_URL`, `DIRECT_URL`, `SESSION_SECRET`, migrations, or a seeded/admin account, login will fail even though the public frontend renders.
+
 ## Supabase
 
 Before Northflank uses Supabase:

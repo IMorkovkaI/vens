@@ -15,7 +15,7 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
   template: `
     <section class="page-hero page-hero-media hero-bg-dashboard-app">
       <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <a routerLink="/dashboard" class="text-link focus-ring">
+        <a routerLink="/dashboard" class="return-link focus-ring">
           Back to dashboard
         </a>
         <p class="mt-6 eyebrow">Listing management</p>
@@ -85,7 +85,7 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
           </label>
 
           @if (errorMessage()) {
-            <div class="status-error">
+            <div class="status-error" role="alert">
               {{ errorMessage() }}
             </div>
           }

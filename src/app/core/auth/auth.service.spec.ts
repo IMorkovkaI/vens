@@ -184,4 +184,48 @@ describe('AuthService', () => {
     );
     httpMock.verify();
   });
+
+  it('should normalize object-shaped browser API login errors', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: PLATFORM_ID,
+          useValue: 'browser',
+        },
+      ],
+    });
+
+    const browserService = TestBed.inject(AuthService);
+    const httpMock = TestBed.inject(HttpTestingController);
+    const resultPromise = firstValueFrom(
+      browserService.login({
+        email: 'admin@vensight.local',
+        password: 'StrongAdminPass2026',
+      }),
+    );
+    const request = httpMock.expectOne('/api/auth/login');
+
+    request.flush(
+      {
+        error: {
+          message: 'Invalid email or password.',
+        },
+      },
+      {
+        status: 401,
+        statusText: 'Unauthorized',
+      },
+    );
+
+    const result = await resultPromise;
+
+    expect(result).toEqual({
+      success: false,
+      error: 'Invalid email or password.',
+    });
+    httpMock.verify();
+  });
 });

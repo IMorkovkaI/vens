@@ -61,7 +61,7 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
           }
         </div>
       } @else if (hasError()) {
-        <div class="status-error">
+        <div class="status-error" role="alert">
           Dashboard data could not be loaded.
         </div>
       } @else {

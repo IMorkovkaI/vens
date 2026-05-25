@@ -21,7 +21,7 @@ import { SeoService } from '../../../core/seo/seo.service';
               Pick two directory profiles and generate a mock AI comparison of positioning, overlap, and fit.
             </p>
           </div>
-          <a routerLink="/companies" class="text-link focus-ring">
+          <a routerLink="/companies" class="return-link focus-ring">
             Browse all companies
           </a>
         </div>
@@ -33,7 +33,7 @@ import { SeoService } from '../../../core/seo/seo.service';
         @if (isLoading()) {
           <div class="h-52 skeleton"></div>
         } @else if (hasError()) {
-          <div class="status-error">
+          <div class="status-error" role="alert">
             Comparison data could not be loaded.
           </div>
         } @else if (companies().length < 2) {
@@ -71,7 +71,7 @@ import { SeoService } from '../../../core/seo/seo.service';
           </form>
 
           @if (errorMessage()) {
-            <div class="mt-5 status-error">
+            <div class="mt-5 status-error" role="alert">
               {{ errorMessage() }}
             </div>
           }

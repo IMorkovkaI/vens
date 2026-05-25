@@ -11,16 +11,16 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
   imports: [CompanyCardComponent, FormsModule, RouterLink],
   template: `
     <section class="page-hero page-hero-media hero-bg-home">
-      <div class="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
-        <div class="max-w-3xl">
+      <div class="hero-shell mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
+        <div>
           <p class="eyebrow">
-            Business directory with AI context
+            Premium company intelligence directory
           </p>
           <h1 class="mt-5 max-w-4xl text-4xl font-semibold tracking-normal text-slate-950 sm:text-5xl">
-            Find sharper company profiles before the next market move.
+            Read the market before the market moves.
           </h1>
           <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            Vensight organizes startups, agencies, and software companies into searchable profiles with mock AI summaries, categories, and SEO-ready business context.
+            Vensight turns company URLs, category signals, and editorial review into a premium searchable index for operators, analysts, and launch teams.
           </p>
           <form class="hero-search mt-8" (ngSubmit)="submitSearch()">
             <label class="block">
@@ -50,11 +50,11 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
 
           <div class="hero-kpi-grid mt-8">
             <div class="hero-kpi">
-              <p class="text-2xl font-semibold text-slate-950">{{ allCompanies().length }}+</p>
-              <p class="mt-1 text-xs font-semibold text-slate-500">Companies</p>
+              <p class="text-2xl font-semibold text-slate-950">{{ companyCount() }}</p>
+              <p class="mt-1 text-xs font-semibold text-slate-500">Company profiles</p>
             </div>
             <div class="hero-kpi">
-              <p class="text-2xl font-semibold text-slate-950">{{ categories().length }}+</p>
+              <p class="text-2xl font-semibold text-slate-950">{{ categoryCount() }}</p>
               <p class="mt-1 text-xs font-semibold text-slate-500">Categories</p>
             </div>
             <div class="hero-kpi">
@@ -62,8 +62,8 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
               <p class="mt-1 text-xs font-semibold text-slate-500">AI summaries</p>
             </div>
             <div class="hero-kpi">
-              <p class="text-2xl font-semibold text-slate-950">Mock</p>
-              <p class="mt-1 text-xs font-semibold text-slate-500">AI provider</p>
+              <p class="text-2xl font-semibold text-slate-950">Safe</p>
+              <p class="mt-1 text-xs font-semibold text-slate-500">AI default</p>
             </div>
           </div>
 
@@ -75,6 +75,47 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
             <span class="brand-chip">Operators</span>
           </div>
         </div>
+
+        <aside class="market-panel p-5 lg:p-6" aria-label="Directory market snapshot">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-xs font-bold uppercase text-slate-300">Vensight index</p>
+              <h2 class="mt-2 text-3xl font-semibold text-white">Category pulse</h2>
+            </div>
+            <span class="market-score">{{ companyCount() || '-' }}</span>
+          </div>
+
+          <div class="mt-6">
+            @for (category of categories().slice(0, 6); track category.id) {
+              <a [routerLink]="['/categories', category.slug]" class="market-row focus-ring">
+                <span>
+                  <span class="block text-sm font-semibold text-white">{{ category.name }}</span>
+                  <span class="mt-1 block text-xs font-semibold text-slate-300">
+                    {{ categoryCompanyCount(category.slug) }} compan{{ categoryCompanyCount(category.slug) === 1 ? 'y' : 'ies' }} indexed
+                  </span>
+                </span>
+                <span class="market-score">
+                  {{ categoryCompanyCount(category.slug) }}
+                </span>
+              </a>
+            }
+          </div>
+
+          <div class="mt-6 grid gap-3 sm:grid-cols-3">
+            <div class="data-row">
+              <p class="text-xs font-semibold uppercase text-slate-500">Source</p>
+              <p class="mt-1 text-sm font-bold text-slate-950">HTTPS</p>
+            </div>
+            <div class="data-row">
+              <p class="text-xs font-semibold uppercase text-slate-500">Mode</p>
+              <p class="mt-1 text-sm font-bold text-slate-950">Review</p>
+            </div>
+            <div class="data-row">
+              <p class="text-xs font-semibold uppercase text-slate-500">Output</p>
+              <p class="mt-1 text-sm font-bold text-slate-950">Profile</p>
+            </div>
+          </div>
+        </aside>
       </div>
     </section>
 
@@ -82,9 +123,9 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
       <div class="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
         <div>
           <p class="eyebrow">Powered by AI</p>
-          <h2 class="mt-3 text-3xl font-semibold text-slate-950">Smarter insights, better decisions.</h2>
+          <h2 class="mt-3 text-3xl font-semibold text-slate-950">Structured signals for business discovery.</h2>
           <p class="mt-3 max-w-xl text-base leading-7 text-slate-600">
-            The analysis workflow sits below the hero so the globe stays visible while the page still shows how Vensight turns URLs into usable business context.
+            Each profile is shaped for scanning: category fit, summary quality, tags, website context, and SEO-ready descriptions stay visible across the public index.
           </p>
         </div>
 
@@ -144,7 +185,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
       <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <h2 class="text-2xl font-semibold text-slate-950">Featured companies</h2>
-          <p class="mt-2 text-sm text-slate-600">A small starter set showing how public profiles will feel.</p>
+          <p class="mt-2 text-sm text-slate-600">A sample of polished profiles from the launch directory.</p>
         </div>
         <a routerLink="/companies" class="text-link focus-ring">
           See all companies
@@ -158,7 +199,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
           }
         </div>
       } @else if (hasError()) {
-        <div class="mt-8 status-error">
+        <div class="mt-8 status-error" role="alert">
           Featured companies could not be loaded.
         </div>
       } @else if (!featuredCompanies().length) {
@@ -176,14 +217,29 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
 
     <section class="section-band">
       <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-        <h2 class="text-2xl font-semibold text-slate-950">Explore by category</h2>
+        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <h2 class="text-2xl font-semibold text-slate-950">Explore by category</h2>
+            <p class="mt-2 text-sm text-slate-600">
+              {{ companyCount() }} company profile{{ companyCount() === 1 ? '' : 's' }} across {{ categoryCount() }} launch categories.
+            </p>
+          </div>
+          <a routerLink="/companies" class="text-link focus-ring">
+            Browse {{ companyCount() }} profiles
+          </a>
+        </div>
         <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           @for (category of categories(); track category.id) {
             <a [routerLink]="['/categories', category.slug]" class="category-tile text-sm font-semibold focus-ring">
-              <span class="category-icon" aria-hidden="true">{{ category.name.charAt(0) }}</span>
-              <span class="mt-4 block">{{ category.name }}</span>
-              <span class="mt-1 block text-xs font-medium text-slate-500">
-                {{ categoryCompanyCount(category.slug) }} compan{{ categoryCompanyCount(category.slug) === 1 ? 'y' : 'ies' }}
+              <span class="flex items-start justify-between gap-4">
+                <span class="category-icon" aria-hidden="true">{{ category.name.charAt(0) }}</span>
+                <span class="category-count" [attr.aria-label]="categoryCompanyCount(category.slug) + ' companies'">
+                  {{ categoryCompanyCount(category.slug) }}
+                </span>
+              </span>
+              <span class="mt-4 block text-base text-slate-950">{{ category.name }}</span>
+              <span class="mt-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+                {{ categoryCompanyCount(category.slug) }} compan{{ categoryCompanyCount(category.slug) === 1 ? 'y' : 'ies' }} indexed
               </span>
             </a>
           }
@@ -244,6 +300,14 @@ export class HomePageComponent implements OnInit {
 
   protected aiSummaryCount(): number {
     return this.allCompanies().filter((company) => company.aiSummary).length;
+  }
+
+  protected companyCount(): number {
+    return this.allCompanies().length;
+  }
+
+  protected categoryCount(): number {
+    return this.categories().length;
   }
 
   protected categoryCompanyCount(categorySlug: string): number {

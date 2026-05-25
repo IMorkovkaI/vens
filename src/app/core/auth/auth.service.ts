@@ -56,7 +56,7 @@ export class AuthService {
       }),
       map(() => ({ success: true })),
       catchError((error: HttpErrorResponse) =>
-        error.status === 0
+        error.status === 0 && !this.isHostedFrontend()
           ? this.loginLocally(credentials)
           : of({ success: false, error: this.getApiError(error, 'Sign in failed.') }),
       ),
@@ -72,7 +72,7 @@ export class AuthService {
     return this.http.post<ApiDataResponse<DashboardUser>>('/api/auth/register', credentials).pipe(
       map(() => ({ success: true })),
       catchError((error: HttpErrorResponse) =>
-        error.status === 0
+        error.status === 0 && !this.isHostedFrontend()
           ? this.registerLocally(credentials)
           : of({ success: false, error: this.getApiError(error, 'Registration failed.') }),
       ),
@@ -99,7 +99,7 @@ export class AuthService {
       .pipe(
         map(() => ({ success: true })),
         catchError((error: HttpErrorResponse) =>
-          error.status === 0
+          error.status === 0 && !this.isHostedFrontend()
             ? this.createDeveloperLocally(credentials)
             : of({
                 success: false,
@@ -122,7 +122,9 @@ export class AuthService {
       .pipe(
         map((response) => response.data),
         catchError((error: HttpErrorResponse) =>
-          error.status === 0 ? this.getDeveloperAccountsLocally() : of([]),
+          error.status === 0 && !this.isHostedFrontend()
+            ? this.getDeveloperAccountsLocally()
+            : of([]),
         ),
         delay(120),
       );
@@ -405,8 +407,56 @@ export class AuthService {
   }
 
   private getApiError(error: HttpErrorResponse, fallback: string): string {
-    const apiError = error.error as { error?: string } | undefined;
+    if (error.status === 0) {
+      return 'The production API is unavailable. Confirm the Northflank backend is running and Vercel is rewriting /api requests to it.';
+    }
 
-    return apiError?.error ?? fallback;
+    if (error.status === 404 && error.url?.includes('/api/')) {
+      return 'The API route is not connected yet. Replace the Vercel rewrite placeholder with the Northflank backend URL.';
+    }
+
+    // API providers can return strings, objects, or nested errors; keep UI copy readable.
+    return this.readErrorMessage(error.error) ?? error.message ?? fallback;
+  }
+
+  private readErrorMessage(value: unknown): string | undefined {
+    if (typeof value === 'string') {
+      return value.trim() || undefined;
+    }
+
+    if (!value || typeof value !== 'object') {
+      return undefined;
+    }
+
+    const record = value as Record<string, unknown>;
+    const candidate =
+      this.readErrorMessage(record['error']) ??
+      this.readErrorMessage(record['message']) ??
+      this.readErrorMessage(record['detail']);
+
+    if (candidate) {
+      return candidate;
+    }
+
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return undefined;
+    }
+  }
+
+  private isHostedFrontend(): boolean {
+    if (!this.isBrowser) {
+      return false;
+    }
+
+    // Hosted frontends must use Northflank for auth instead of local browser accounts.
+    const hostname = window.location.hostname.toLowerCase();
+
+    return (
+      hostname.endsWith('.vercel.app') ||
+      hostname === 'vensight.com' ||
+      hostname === 'www.vensight.com'
+    );
   }
 }
