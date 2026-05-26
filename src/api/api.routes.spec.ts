@@ -3,7 +3,7 @@ import { Server } from 'node:http';
 import { AddressInfo } from 'node:net';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DashboardRole } from '../app/core/auth/auth.models';
-import { AiProviderCheckResult } from './ai/ai-analysis.types';
+import { AiAnalysisResult, AiProviderCheckResult } from './ai/ai-analysis.types';
 
 const originalDatabaseUrl = process.env['DATABASE_URL'];
 const originalAiProvider = process.env['AI_PROVIDER'];
@@ -181,8 +181,10 @@ describe('API AI provider check route', () => {
       email: 'admin@vensight.test',
       role: 'admin',
     });
-    expect(typeof body.data.token).toBe('string');
+    expect(body.data.token).toBeUndefined();
     expect(typeof body.data.expiresAt).toBe('string');
+    expect(response.headers.get('set-cookie')).toContain('HttpOnly');
+    expect(response.headers.get('set-cookie')).toContain('SameSite=Lax');
     expect(new Date(body.data.expiresAt).getTime()).toBeGreaterThan(Date.now());
     expect(serializedBody).not.toContain('SESSION_SECRET');
   });
@@ -227,15 +229,44 @@ describe('API AI provider check route', () => {
     expect(body.error).toBe('Sign in is required.');
   });
 
-  it('rejects dashboard users from discovery search', async () => {
+  it('lets registered users run one discovery search per day', async () => {
     const harness = await createApiHarness({ aiProvider: 'mock' });
     server = harness.server;
 
     const response = await postDiscoverySearch(harness, 'user', 'biotech companies');
-    const body = (await response.json()) as ApiErrorResponse;
+    const body = (await response.json()) as DiscoverySearchApiResponse;
 
-    expect(response.status).toBe(403);
-    expect(body.error).toBe('Developer or admin access is required.');
+    expect(response.status).toBe(200);
+    expect(body.data.results[0]).toMatchObject({
+      url: 'https://candidate.example.com',
+      provider: 'searchapi',
+    });
+
+    const secondResponse = await postDiscoverySearch(harness, 'user', 'fintech companies');
+    const secondBody = (await secondResponse.json()) as ApiErrorResponse;
+
+    expect(secondResponse.status).toBe(429);
+    expect(secondBody.error).toBe('Registered accounts can run one discovery search per day.');
+  });
+
+  it('lets registered users run one AI URL analysis per day', async () => {
+    const harness = await createApiHarness({ aiProvider: 'mock' });
+    server = harness.server;
+
+    const response = await postAiAnalyze(harness, 'user', 'daily-analysis.example');
+    const body = (await response.json()) as { data: AiAnalysisResult };
+
+    expect(response.status).toBe(200);
+    expect(body.data).toMatchObject({
+      url: 'https://daily-analysis.example',
+      provider: 'mock',
+    });
+
+    const secondResponse = await postAiAnalyze(harness, 'user', 'second-analysis.example');
+    const secondBody = (await secondResponse.json()) as ApiErrorResponse;
+
+    expect(secondResponse.status).toBe(429);
+    expect(secondBody.error).toBe('Registered accounts can run one AI URL analysis per day.');
   });
 
   it('lets developers search and save discovery candidates without creating listings', async () => {
@@ -420,6 +451,26 @@ async function postDiscoverySearch(
   });
 }
 
+async function postAiAnalyze(
+  harness: ApiHarness,
+  role: DashboardRole,
+  url: string,
+): Promise<Response> {
+  const token = harness.signSessionToken({
+    email: `${role}@vensight.test`,
+    role,
+  });
+
+  return fetch(`${harness.baseUrl}/api/ai/analyze`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ url }),
+  });
+}
+
 async function postDiscoveryCandidate(
   harness: ApiHarness,
   role: DashboardRole,
@@ -500,8 +551,28 @@ function createFakeAiAnalysisService(options: {
       confidence: options.aiProvider === 'mock' ? 0.85 : 0.83,
     }),
     getRecentAnalyses: async () => [],
-    analyzeUrl: async () => {
-      throw new Error('Not used in this route spec.');
+    analyzeUrl: async (url: string) => {
+      const normalizedUrl = url.startsWith('https://') ? url : `https://${url}`;
+      const hostname = new URL(normalizedUrl).hostname;
+
+      return {
+        url: normalizedUrl,
+        hostname,
+        formData: {
+          name: titleCase(hostname.split('.')[0]?.replace(/-/g, ' ') ?? 'Example'),
+          website: normalizedUrl,
+          categorySlug: 'ai-tools',
+          tags: ['AI analysis'],
+          description: 'Generated route analysis.',
+          aiSummary: 'Generated route analysis summary.',
+          seoDescription: 'Generated route analysis SEO description.',
+        },
+        createdAt: '2026-05-26T00:00:00.000Z',
+        fromCache: false,
+        provider: 'mock',
+        model: 'mock-qwen2.5-7b-profile-generator',
+        confidence: 0.85,
+      } satisfies AiAnalysisResult;
     },
     checkSelectedProvider: async (url: string) => {
       if (url.startsWith('http://')) {

@@ -73,6 +73,19 @@ model User {
   @@index([email])
 }
 
+model DailyUsage {
+  id        String   @id @default(cuid())
+  userEmail String
+  action    String
+  dateKey   String
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userEmail, action, dateKey])
+  @@index([userEmail, dateKey])
+}
+
 model Session {
   id        String    @id @default(cuid())
   tokenHash String    @unique

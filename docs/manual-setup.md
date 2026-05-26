@@ -1,6 +1,6 @@
 # Manual Setup Checklist
 
-This is the project-level list of things that still need manual setup outside the codebase before Vensight is production-ready.
+This is the project-level list of things that still need manual setup outside the codebase. Vensight is now set up for the intended production split: Vercel serves the frontend/public SSR routes, Northflank serves `/api`, and Supabase stores Prisma data.
 
 ## Local Development
 
@@ -35,7 +35,8 @@ This is the project-level list of things that still need manual setup outside th
 - [x] Enable RLS on public Vensight tables with `npm run supabase:rls:enable`.
 - [x] Confirm RLS status with `npm run supabase:rls:check`.
 - [x] Apply the `Session` migration to Supabase, then re-run `npm run supabase:rls:enable` and `npm run supabase:rls:check`.
-- Confirm the latest migration `20260524080000_add_discovery_candidates` is applied before using optional discovery queue endpoints.
+- Confirm the latest migration `20260526015000_add_daily_usage` is applied before allowing registered users to run daily discovery or AI analysis actions.
+- Registered contributor access is intentionally limited to one AI URL analysis and one discovery search per account per UTC day, with an additional daily network cap to reduce account-farming abuse.
 - Configure Supabase backups and test a restore path before exposing real users.
 
 ## Auth And Accounts
@@ -45,6 +46,7 @@ This is the project-level list of things that still need manual setup outside th
 - Configure a production-grade `SESSION_SECRET`.
 - [x] Add logout/session revocation UI and backend token revocation for Prisma sessions.
 - [x] Add bearer session refresh so persisted dashboard sessions rotate and expired sessions are cleared.
+- [x] Use HttpOnly `SameSite=Lax` session cookies for hosted browser dashboard sessions so tokens are not persisted in browser `localStorage`.
 
 ## AI Providers
 
@@ -55,6 +57,7 @@ This is the project-level list of things that still need manual setup outside th
 - [x] Add local/dev `GROQ_API_KEY`, `OPENROUTER_API_KEY`, or `GOOGLE_AI_API_KEY` only to backend env when deliberately testing that provider. Never expose those keys through Angular/browser config or `.env.example`.
 - [x] Use `AI_PROVIDER=groq` for local provider testing until switching back to mock.
 - Add production provider keys only to Northflank/backend deployment env vars when production AI testing starts.
+- Set `AI_FALLBACK_PROVIDERS=openrouter,google,mock` or another ordered fallback list when using a real primary provider.
 - Document provider limits, fallback rules, and data-source disclaimers before using external APIs.
 - For URL analysis, submit HTTPS company URLs. Plain HTTP URLs are intentionally rejected with a safe-link warning.
 
@@ -79,10 +82,11 @@ This is the project-level list of things that still need manual setup outside th
 - Set `TRUST_PROXY=true` on Northflank or another trusted reverse-proxy host so rate limiting uses the platform-provided client IP. Keep it `false` for direct/local runs.
 - Set `API_REQUEST_LOGS=true` on Northflank when you want structured API request/error logs with request IDs for manual monitoring.
 - Add backend-only discovery env vars when enabled: `SEARCH_PROVIDER`, `SEARCH_API_KEY`, optional `SEARCH_API_ENGINE`, optional `SEARCH_FALLBACK_PROVIDER`, and optional `TAVILY_API_KEY`.
+- Re-run `npm run prisma:migrate:deploy` after deploying the daily usage limit change so Supabase has the `DailyUsage` table.
 - Add `PUBLIC_SITE_URL=https://vensight.com` or the final Vercel custom domain to the deployed web/backend host so sitemap and Open Graph URLs use the production domain.
 - Add backend `ALLOWED_ORIGINS` with exact Vercel preview/production domains before cross-origin API testing. Include `https://vensight-phi.vercel.app` until the final custom domain is active.
 - Add `API_ONLY=true` to Northflank when Vercel is serving the Angular frontend.
-- Replace the placeholder Northflank host in `vercel.json` once the backend host URL exists.
+- [x] Replace the placeholder Northflank host in `vercel.json` once the backend host URL exists.
 - Dashboard login on Vercel requires the Northflank API rewrite, Supabase migrations, `SESSION_SECRET`, and a seeded/admin account; the public frontend can deploy before this is complete, but protected dashboard calls will fail.
 - Run Prisma migrations during deployment with `npm run prisma:migrate:deploy`.
 - Run seed only for controlled initial data, not as a recurring destructive operation.
@@ -98,6 +102,7 @@ This is the project-level list of things that still need manual setup outside th
 - Include `https://vensight-phi.vercel.app/` in the first Vercel smoke pass while the custom domain is pending.
 - [x] Sanitize production API error responses so internal database/provider details stay server-side.
 - [x] Add request IDs and safe structured API request logs.
+- [x] Harden AI URL extraction against localhost, private, reserved, mapped-private, and unsafe redirected hosts before fetching.
 - Structured logs are ready for Northflank log review. Later: add hosted error monitoring if traffic grows beyond manual log review.
 
 ## Content And SEO

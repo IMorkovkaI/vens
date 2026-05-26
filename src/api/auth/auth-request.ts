@@ -2,17 +2,28 @@ import { Request } from 'express';
 import { DashboardUser } from '../../app/core/auth/auth.models';
 import { getPrismaClient } from '../database/prisma.client';
 import { hasDatabaseUrl } from '../directory/directory-repository';
+import { readSessionCookie } from './session-cookie';
 import { hashSessionToken, verifySessionToken } from './session-token';
 
 export async function readRequestUser(req: Request): Promise<DashboardUser | undefined> {
-  return readBearerTokenUser(req);
+  return readAuthTokenUser(req);
 }
 
-async function readBearerTokenUser(req: Request): Promise<DashboardUser | undefined> {
+export function readRequestAuthToken(req: Request): string | undefined {
   const authorization = req.header('authorization');
   const [scheme, token, extra] = authorization?.split(/\s+/) ?? [];
 
-  if (scheme?.toLowerCase() !== 'bearer' || !token || extra) {
+  if (scheme?.toLowerCase() === 'bearer' && token && !extra) {
+    return token;
+  }
+
+  return readSessionCookie(req);
+}
+
+async function readAuthTokenUser(req: Request): Promise<DashboardUser | undefined> {
+  const token = readRequestAuthToken(req);
+
+  if (!token) {
     return undefined;
   }
 

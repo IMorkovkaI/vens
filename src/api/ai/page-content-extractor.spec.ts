@@ -71,6 +71,30 @@ describe('page content extractor', () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
+  it('rejects reserved and mapped private addresses before fetching', async () => {
+    const fetchImpl = vi.fn() as unknown as typeof fetch;
+
+    await expect(
+      extractPageContent('https://mapped.example', {
+        fetchImpl,
+        resolveHostname: async () => ['::ffff:192.168.1.10'],
+      }),
+    ).rejects.toThrow('Enter a public HTTPS company URL.');
+    await expect(
+      extractPageContent('https://carrier-grade-nat.example', {
+        fetchImpl,
+        resolveHostname: async () => ['100.64.0.10'],
+      }),
+    ).rejects.toThrow('Enter a public HTTPS company URL.');
+    await expect(
+      extractPageContent('https://documentation.example', {
+        fetchImpl,
+        resolveHostname: async () => ['203.0.113.10'],
+      }),
+    ).rejects.toThrow('Enter a public HTTPS company URL.');
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it('rejects redirects to private URLs before following them', async () => {
     const fetchImpl = vi.fn(async () =>
       createRedirectResponse('https://private.example'),

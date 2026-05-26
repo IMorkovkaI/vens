@@ -23,11 +23,11 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
     </section>
 
     <section class="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[420px_1fr] lg:px-8">
-      @if (!authService.canManageListings()) {
+      @if (!authService.canUseContributorTools()) {
         <div class="status-warning p-6 lg:col-span-2">
-          <h2 class="text-lg font-semibold text-slate-950">Developer access required</h2>
+          <h2 class="text-lg font-semibold text-slate-950">Sign in required</h2>
           <p class="mt-2 text-sm leading-6 text-slate-700">
-            Your role can inspect the dashboard, but only developers and admins can search and review listing candidates.
+            Registered accounts can run one discovery search per day. Developers and admins can search without the daily contributor limit.
           </p>
         </div>
       } @else {
@@ -35,7 +35,7 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
           <form class="surface-card p-6" (ngSubmit)="search()">
             <h2 class="text-xl font-semibold text-slate-950">Find companies</h2>
             <p class="mt-2 text-sm leading-6 text-slate-600">
-              Use natural search terms. Vensight returns public source pages only; you choose which URL is worth analyzing.
+              Use natural search terms. Registered accounts get one search per day; developer and admin accounts can review candidates without that limit.
             </p>
             <label class="mt-5 block">
               <span class="text-sm font-semibold text-slate-900">What are you looking for?</span>
@@ -207,7 +207,7 @@ export class DiscoveryPageComponent {
   ) {}
 
   protected search(): void {
-    if (!this.authService.canManageListings()) {
+    if (!this.authService.canUseContributorTools()) {
       return;
     }
 

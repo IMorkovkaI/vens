@@ -1,12 +1,16 @@
 import './environment/load-env';
 import { Request, Response, Router } from 'express';
+import { createHash } from 'node:crypto';
 import { ApiAiAnalysisService, apiAiAnalysisService } from './ai/ai-analysis.service';
+import { normalizeHttpsAnalysisUrl } from './ai/page-content-extractor';
 import { competitorComparisonService } from './ai/competitor-comparison.service';
 import { getAuthRepository } from './auth/auth-repository';
-import { readRequestUser } from './auth/auth-request';
+import { readRequestAuthToken, readRequestUser } from './auth/auth-request';
+import { clearSessionCookie, setSessionCookie } from './auth/session-cookie';
 import { DashboardRole } from '../app/core/auth/auth.models';
+import { getPrismaClient } from './database/prisma.client';
 import { getBackendRuntimeStatus } from './environment/backend-config';
-import { getDirectoryRepository } from './directory/directory-repository';
+import { getDirectoryRepository, hasDatabaseUrl } from './directory/directory-repository';
 import {
   normalizeStatus,
   validateDiscoverySearchRequest,
@@ -36,6 +40,10 @@ type SearchDiscoveryServiceContract = Pick<
 let activeAiAnalysisService: ApiAiAnalysisServiceContract = apiAiAnalysisService;
 let activeSearchDiscoveryService: SearchDiscoveryServiceContract = searchDiscoveryService;
 let productionErrorModeForTests: boolean | undefined;
+const userDailyUsage = new Map<string, number>();
+const DAILY_USER_LIMIT = 1;
+const DAILY_NETWORK_LIMIT = 5;
+type DailyUsageAction = 'ai_analysis' | 'discovery_search';
 
 export function setApiAiAnalysisServiceForTests(
   service: ApiAiAnalysisServiceContract,
@@ -89,7 +97,8 @@ apiRouter.get('/config/runtime', async (req, res) => {
 });
 
 apiRouter.post('/ai/analyze', async (req, res) => {
-  const authorizationError = await authorizeDashboardRole(req, ['admin', 'developer']);
+  const user = await readRequestUser(req);
+  const authorizationError = authorizeDashboardUser(user, ['admin', 'developer', 'user']);
 
   if (authorizationError) {
     res.status(403).json({
@@ -98,13 +107,34 @@ apiRouter.post('/ai/analyze', async (req, res) => {
     return;
   }
 
+  let normalizedUrl = '';
+
   try {
-    const result = await activeAiAnalysisService.analyzeUrl(String(req.body?.url ?? ''));
+    normalizedUrl = normalizeHttpsAnalysisUrl(String(req.body?.url ?? ''));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Analysis failed.';
+
+    res.status(400).json({
+      ...createErrorResponse(res, error, 400, message),
+    });
+    return;
+  }
+
+  const quotaError = await reserveDailyUserUsage(user, 'ai_analysis', req);
+
+  if (quotaError) {
+    res.status(429).json({ error: quotaError });
+    return;
+  }
+
+  try {
+    const result = await activeAiAnalysisService.analyzeUrl(normalizedUrl);
 
     res.json({
       data: result,
     });
   } catch (error) {
+    await releaseDailyUserUsage(user, 'ai_analysis', req);
     const message = error instanceof Error ? error.message : 'Analysis failed.';
     const statusCode = isUrlValidationError(message) ? 400 : 500;
 
@@ -161,7 +191,7 @@ apiRouter.get('/ai/analyses', async (req, res) => {
 
 apiRouter.post('/discovery/search', async (req, res) => {
   const user = await readRequestUser(req);
-  const authorizationError = authorizeDashboardUser(user, ['admin', 'developer']);
+  const authorizationError = authorizeDashboardUser(user, ['admin', 'developer', 'user']);
 
   if (authorizationError) {
     res.status(403).json({
@@ -170,8 +200,18 @@ apiRouter.post('/discovery/search', async (req, res) => {
     return;
   }
 
+  let reservedDailyUsage = false;
+
   try {
     const request = validateDiscoverySearchRequest(req.body);
+    const quotaError = await reserveDailyUserUsage(user, 'discovery_search', req);
+
+    if (quotaError) {
+      res.status(429).json({ error: quotaError });
+      return;
+    }
+
+    reservedDailyUsage = true;
     const results = await activeSearchDiscoveryService.search(request);
 
     res.json({
@@ -181,6 +221,10 @@ apiRouter.post('/discovery/search', async (req, res) => {
       },
     });
   } catch (error) {
+    if (reservedDailyUsage) {
+      await releaseDailyUserUsage(user, 'discovery_search', req);
+    }
+
     respondWithApiError(res, error, 400, 'Discovery search failed.');
   }
 });
@@ -304,8 +348,9 @@ apiRouter.post('/auth/login', async (req, res) => {
   try {
     const session = await getAuthRepository().login(req.body);
 
+    setSessionCookie(req, res, session.token, session.expiresAt);
     res.json({
-      data: session,
+      data: createBrowserSession(session),
     });
   } catch (error) {
     respondWithAuthError(res, error);
@@ -314,7 +359,8 @@ apiRouter.post('/auth/login', async (req, res) => {
 
 apiRouter.post('/auth/logout', async (req, res) => {
   try {
-    await getAuthRepository().logout(readBearerToken(req));
+    await getAuthRepository().logout(readRequestAuthToken(req));
+    clearSessionCookie(req, res);
 
     res.json({
       data: {
@@ -328,12 +374,14 @@ apiRouter.post('/auth/logout', async (req, res) => {
 
 apiRouter.post('/auth/refresh', async (req, res) => {
   try {
-    const session = await getAuthRepository().refresh(readBearerToken(req));
+    const session = await getAuthRepository().refresh(readRequestAuthToken(req));
 
+    setSessionCookie(req, res, session.token, session.expiresAt);
     res.json({
-      data: session,
+      data: createBrowserSession(session),
     });
   } catch (error) {
+    clearSessionCookie(req, res);
     respondWithAuthError(res, error, 403);
   }
 });
@@ -567,10 +615,202 @@ function authorizeDashboardUser(
   }
 
   if (!allowedRoles.includes(user.role)) {
-    return 'Developer or admin access is required.';
+    return allowedRoles.includes('user')
+      ? 'Sign in is required.'
+      : 'Developer or admin access is required.';
   }
 
   return '';
+}
+
+async function reserveDailyUserUsage(
+  user: Awaited<ReturnType<typeof readRequestUser>>,
+  action: DailyUsageAction,
+  req: Request,
+): Promise<string> {
+  if (!user || user.role === 'admin' || user.role === 'developer') {
+    return '';
+  }
+
+  const identities = [
+    {
+      value: user.email.trim().toLowerCase(),
+      limit: DAILY_USER_LIMIT,
+      message: getDailyUsageMessage(action),
+    },
+    {
+      value: getDailyUsageNetworkIdentity(req),
+      limit: DAILY_NETWORK_LIMIT,
+      message: 'Too many contributor actions from this network today.',
+    },
+  ].filter((identity) => identity.value);
+  const reservedIdentities: Array<{ value: string; limit: number }> = [];
+
+  for (const identity of identities) {
+    const quotaError = await reserveDailyUsageIdentity(
+      identity.value,
+      action,
+      identity.limit,
+      identity.message,
+    );
+
+    if (quotaError) {
+      await Promise.all(
+        reservedIdentities.map((reservedIdentity) =>
+          releaseDailyUsageIdentity(reservedIdentity.value, action),
+        ),
+      );
+
+      return quotaError;
+    }
+
+    reservedIdentities.push(identity);
+  }
+
+  return '';
+}
+
+async function reserveDailyUsageIdentity(
+  identity: string,
+  action: DailyUsageAction,
+  limit: number,
+  limitMessage: string,
+): Promise<string> {
+  const dateKey = new Date().toISOString().slice(0, 10);
+
+  if (!hasDatabaseUrl()) {
+    const key = `${identity}:${action}:${dateKey}`;
+    const count = userDailyUsage.get(key) ?? 0;
+
+    if (count >= limit) {
+      return limitMessage;
+    }
+
+    userDailyUsage.set(key, count + 1);
+    return '';
+  }
+
+  const prisma = getPrismaClient();
+
+  const updatedUsage = await prisma.dailyUsage.updateMany({
+    where: {
+      userEmail: identity,
+      action,
+      dateKey,
+      count: {
+        lt: limit,
+      },
+    },
+    data: {
+      count: {
+        increment: 1,
+      },
+    },
+  });
+
+  if (updatedUsage.count > 0) {
+    return '';
+  }
+
+  try {
+    await prisma.dailyUsage.create({
+      data: {
+        userEmail: identity,
+        action,
+        dateKey,
+        count: 1,
+      },
+    });
+
+    return '';
+  } catch (error) {
+    if (!isUniqueConstraintError(error)) {
+      throw error;
+    }
+
+    const retryUsage = await prisma.dailyUsage.updateMany({
+      where: {
+        userEmail: identity,
+        action,
+        dateKey,
+        count: {
+          lt: limit,
+        },
+      },
+      data: {
+        count: {
+          increment: 1,
+        },
+      },
+    });
+
+    return retryUsage.count > 0 ? '' : limitMessage;
+  }
+}
+
+async function releaseDailyUserUsage(
+  user: Awaited<ReturnType<typeof readRequestUser>>,
+  action: DailyUsageAction,
+  req: Request,
+): Promise<void> {
+  if (!user || user.role === 'admin' || user.role === 'developer') {
+    return;
+  }
+
+  const identities = [user.email.trim().toLowerCase(), getDailyUsageNetworkIdentity(req)].filter(Boolean);
+
+  await Promise.all(identities.map((identity) => releaseDailyUsageIdentity(identity, action)));
+}
+
+async function releaseDailyUsageIdentity(identity: string, action: DailyUsageAction): Promise<void> {
+  const dateKey = new Date().toISOString().slice(0, 10);
+
+  if (!hasDatabaseUrl()) {
+    const key = `${identity}:${action}:${dateKey}`;
+    const count = userDailyUsage.get(key) ?? 0;
+
+    if (count <= 1) {
+      userDailyUsage.delete(key);
+      return;
+    }
+
+    userDailyUsage.set(key, count - 1);
+    return;
+  }
+
+  await getPrismaClient().dailyUsage.updateMany({
+    where: {
+      userEmail: identity,
+      action,
+      dateKey,
+      count: {
+        gt: 0,
+      },
+    },
+    data: {
+      count: {
+        decrement: 1,
+      },
+    },
+  });
+}
+
+function getDailyUsageNetworkIdentity(req: Request): string {
+  const ip = req.ip || req.socket.remoteAddress || '';
+
+  if (!ip) {
+    return '';
+  }
+
+  return `ip:${createHash('sha256').update(ip).digest('hex').slice(0, 32)}`;
+}
+
+function getDailyUsageMessage(action: DailyUsageAction): string {
+  if (action === 'discovery_search') {
+    return 'Registered accounts can run one discovery search per day.';
+  }
+
+  return 'Registered accounts can run one AI URL analysis per day.';
 }
 
 function validateDiscoveryCandidateInput(value: unknown): DiscoveryCandidateInput {
@@ -619,17 +859,6 @@ function parsePositiveInteger(value: unknown, fallback: number): number {
   return Math.min(parsedValue, 50);
 }
 
-function readBearerToken(req: Request): string | undefined {
-  const authorization = req.header('authorization');
-  const [scheme, token, extra] = authorization?.split(/\s+/) ?? [];
-
-  if (scheme?.toLowerCase() !== 'bearer' || !token || extra) {
-    return undefined;
-  }
-
-  return token;
-}
-
 function getProviderCheckStatusCode(result: {
   error?: string;
   source?: { safetyStatus: string };
@@ -643,6 +872,21 @@ function getProviderCheckStatusCode(result: {
   }
 
   return 502;
+}
+
+function createBrowserSession<T extends { token?: string }>(session: T): Omit<T, 'token'> {
+  const { token: _token, ...publicSession } = session;
+
+  return publicSession;
+}
+
+function isUniqueConstraintError(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code?: unknown }).code === 'P2002'
+  );
 }
 
 function isUrlValidationError(message: string): boolean {

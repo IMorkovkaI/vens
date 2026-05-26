@@ -33,6 +33,7 @@ describe('DiscoveryPageComponent', () => {
         {
           provide: AuthService,
           useValue: {
+            canUseContributorTools: () => true,
             canManageListings: () => true,
           },
         },

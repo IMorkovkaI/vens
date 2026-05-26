@@ -127,6 +127,17 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
           <p class="mt-3 max-w-xl text-base leading-7 text-slate-600">
             Each profile is shaped for scanning: category fit, summary quality, tags, website context, and SEO-ready descriptions stay visible across the public index.
           </p>
+          <p class="mt-4 max-w-xl text-sm leading-6 text-slate-600">
+            Registered contributors can sign in to run one company discovery search and one AI URL analysis per day. Developer and admin accounts review candidates and publish listings.
+          </p>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <a routerLink="/dashboard/register" class="btn-secondary focus-ring">
+              Create account
+            </a>
+            <a routerLink="/dashboard/login" class="btn-subtle focus-ring">
+              Sign in
+            </a>
+          </div>
         </div>
 
         <div class="surface-card insight-panel p-6">

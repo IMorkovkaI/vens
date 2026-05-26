@@ -69,6 +69,7 @@ describe('AiAnalysisPageComponent', () => {
         {
           provide: AuthService,
           useValue: {
+            canUseContributorTools: () => true,
             canManageListings: () => true,
           },
         },

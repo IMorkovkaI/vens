@@ -60,6 +60,14 @@ describe('request auth reader', () => {
     );
   });
 
+  it('reads dashboard users from HttpOnly session cookies', async () => {
+    const token = signSessionToken(adminUser);
+
+    await expect(readRequestUser(createRequest(undefined, undefined, `vensight_session=${token}`))).resolves.toEqual(
+      adminUser,
+    );
+  });
+
   it('ignores unsigned local identity headers', async () => {
     const encodedUser = Buffer.from(JSON.stringify(adminUser), 'utf8').toString('base64url');
 
@@ -67,11 +75,15 @@ describe('request auth reader', () => {
   });
 });
 
-function createRequest(authorization?: string, legacyUser?: string) {
+function createRequest(authorization?: string, legacyUser?: string, cookie?: string) {
   return {
     header(name: string): string | undefined {
       if (name.toLowerCase() === 'authorization') {
         return authorization;
+      }
+
+      if (name.toLowerCase() === 'cookie') {
+        return cookie;
       }
 
       if (name.toLowerCase() === 'x-vensight-user') {

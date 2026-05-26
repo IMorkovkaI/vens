@@ -34,6 +34,7 @@ export class AuthService {
 
   readonly currentUser = computed(() => this.sessionState()?.user ?? null);
   readonly isAuthenticated = computed(() => this.sessionState() !== null);
+  readonly canUseContributorTools = computed(() => this.sessionState() !== null);
   readonly canManageListings = computed(() => {
     const role = this.currentUser()?.role;
     return role === 'admin' || role === 'developer';
@@ -49,7 +50,9 @@ export class AuthService {
       return this.loginLocally(credentials);
     }
 
-    return this.http.post<ApiDataResponse<AuthSession>>('/api/auth/login', credentials).pipe(
+    return this.http.post<ApiDataResponse<AuthSession>>('/api/auth/login', credentials, {
+      withCredentials: true,
+    }).pipe(
       tap((response) => {
         this.sessionState.set(response.data);
         this.persistSession(response.data);
@@ -69,7 +72,9 @@ export class AuthService {
       return this.registerLocally(credentials);
     }
 
-    return this.http.post<ApiDataResponse<DashboardUser>>('/api/auth/register', credentials).pipe(
+    return this.http.post<ApiDataResponse<DashboardUser>>('/api/auth/register', credentials, {
+      withCredentials: true,
+    }).pipe(
       map(() => ({ success: true })),
       catchError((error: HttpErrorResponse) =>
         error.status === 0 && !this.isHostedFrontend()
@@ -95,6 +100,7 @@ export class AuthService {
     return this.http
       .post<ApiDataResponse<DashboardUser>>('/api/auth/developers', credentials, {
         headers: this.createApiAuthHeaders(),
+        withCredentials: true,
       })
       .pipe(
         map(() => ({ success: true })),
@@ -118,6 +124,7 @@ export class AuthService {
     return this.http
       .get<ApiDataResponse<DashboardUser[]>>('/api/auth/developers', {
         headers: this.createApiAuthHeaders(),
+        withCredentials: true,
       })
       .pipe(
         map((response) => response.data),
@@ -134,7 +141,7 @@ export class AuthService {
     const headers = this.createApiAuthHeaders();
 
     if (this.isBrowser) {
-      this.http.post('/api/auth/logout', {}, { headers }).subscribe({
+      this.http.post('/api/auth/logout', {}, { headers, withCredentials: true }).subscribe({
         error: () => undefined,
       });
     }
@@ -263,7 +270,7 @@ export class AuthService {
       return;
     }
 
-    window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+    window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(this.createStoredSession(session)));
   }
 
   private restoreSession(): AuthSession | null {
@@ -284,7 +291,9 @@ export class AuthService {
         return null;
       }
 
-      return session;
+      const restoredSession = this.createStoredSession(session);
+
+      return session.token ? { ...restoredSession, token: session.token } : restoredSession;
     } catch {
       window.localStorage.removeItem(SESSION_STORAGE_KEY);
       return null;
@@ -374,13 +383,14 @@ export class AuthService {
 
     const session = this.sessionState();
 
-    if (!session?.token) {
+    if (!session) {
       return;
     }
 
     this.http
       .post<ApiDataResponse<AuthSession>>('/api/auth/refresh', {}, {
         headers: this.createApiAuthHeaders(),
+        withCredentials: true,
       })
       .subscribe({
         next: (response) => {
@@ -400,6 +410,14 @@ export class AuthService {
     }
 
     return new Date(session.expiresAt).getTime() <= Date.now();
+  }
+
+  private createStoredSession(session: AuthSession): AuthSession {
+    return {
+      user: session.user,
+      issuedAt: session.issuedAt,
+      expiresAt: session.expiresAt,
+    };
   }
 
   private getLocalExpiresAt(issuedAt: Date): Date {

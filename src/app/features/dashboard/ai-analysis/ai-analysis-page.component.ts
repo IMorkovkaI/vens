@@ -22,17 +22,17 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
         <p class="mt-6 eyebrow">AI analysis</p>
         <h1 class="mt-3 text-4xl font-semibold text-slate-950">Analyze a company URL</h1>
         <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-          Generate a cached company profile from a URL, review the result, and create a listing.
+          Generate a cached company profile from a URL. Registered accounts can run one URL analysis per day; developers and admins can create listings.
         </p>
       </div>
     </section>
 
     <section class="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[420px_1fr] lg:px-8">
-      @if (!authService.canManageListings()) {
+      @if (!authService.canUseContributorTools()) {
         <div class="status-warning p-6 lg:col-span-2">
-          <h2 class="text-lg font-semibold text-slate-950">Developer access required</h2>
+          <h2 class="text-lg font-semibold text-slate-950">Sign in required</h2>
           <p class="mt-2 text-sm leading-6 text-slate-700">
-            Your role can inspect the dashboard, but only developers and admins can run AI analysis or create listings.
+            Registered accounts can run one AI URL analysis per day. Developers and admins can turn reviewed analyses into public listings.
           </p>
         </div>
       } @else {
@@ -70,14 +70,16 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
             >
               {{ isAnalyzing() ? 'Analyzing...' : 'Analyze URL' }}
             </button>
-            <button
-              type="button"
-              class="mt-3 w-full btn-secondary focus-ring"
-              [disabled]="isCheckingProvider()"
-              (click)="checkProvider()"
-            >
-              {{ isCheckingProvider() ? 'Validating provider...' : 'Validate provider' }}
-            </button>
+            @if (authService.canManageListings()) {
+              <button
+                type="button"
+                class="mt-3 w-full btn-secondary focus-ring"
+                [disabled]="isCheckingProvider()"
+                (click)="checkProvider()"
+              >
+                {{ isCheckingProvider() ? 'Validating provider...' : 'Validate provider' }}
+              </button>
+            }
           </form>
 
           @if (providerCheckResult()) {
@@ -164,8 +166,8 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
           @if (!analysisResult()) {
             <div class="empty-state p-10">
               <h2 class="text-xl font-semibold text-slate-950">Analysis preview</h2>
-              <p class="mt-2 text-sm leading-6 text-slate-600">
-                Enter a company URL to generate a provider-backed profile. Results are cached by normalized URL.
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+                Enter a company URL to generate a provider-backed profile. Registered accounts have a daily contributor limit.
               </p>
             </div>
           } @else {
@@ -181,14 +183,20 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
                     </h2>
                     <p class="mt-2 text-sm text-slate-600">{{ analysisResult()?.url }}</p>
                   </div>
-                  <button
-                    type="button"
-                    class="btn-primary focus-ring px-4 py-2"
-                    [disabled]="isCreating() || createdCompany() !== null"
-                    (click)="createListing()"
-                  >
-                    {{ isCreating() ? 'Creating...' : createdCompany() ? 'Listing created' : 'Create listing' }}
-                  </button>
+                  @if (authService.canManageListings()) {
+                    <button
+                      type="button"
+                      class="btn-primary focus-ring px-4 py-2"
+                      [disabled]="isCreating() || createdCompany() !== null"
+                      (click)="createListing()"
+                    >
+                      {{ isCreating() ? 'Creating...' : createdCompany() ? 'Listing created' : 'Create listing' }}
+                    </button>
+                  } @else {
+                    <span class="pill-outline">
+                      Contributor preview
+                    </span>
+                  }
                 </div>
               </div>
 
@@ -337,7 +345,7 @@ export class AiAnalysisPageComponent implements OnInit {
   }
 
   protected analyze(): void {
-    if (!this.authService.canManageListings()) {
+    if (!this.authService.canUseContributorTools()) {
       return;
     }
 

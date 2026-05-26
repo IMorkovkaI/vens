@@ -59,6 +59,7 @@ describe('AuthService', () => {
     expect(service.isAuthenticated()).toBe(true);
     expect(service.currentUser()?.email).toBe('viewer@vensight.local');
     expect(service.currentUser()?.role).toBe('user');
+    expect(service.canUseContributorTools()).toBe(true);
     expect(service.canManageListings()).toBe(false);
     expect(service.canManageDevelopers()).toBe(false);
 
@@ -86,6 +87,7 @@ describe('AuthService', () => {
 
     expect(result.success).toBe(true);
     expect(service.currentUser()?.role).toBe('user');
+    expect(service.canUseContributorTools()).toBe(true);
     expect(service.canManageListings()).toBe(false);
     expect(service.canManageDevelopers()).toBe(false);
   });
@@ -165,6 +167,7 @@ describe('AuthService', () => {
     const request = httpMock.expectOne('/api/auth/refresh');
 
     expect(request.request.method).toBe('POST');
+    expect(request.request.withCredentials).toBe(true);
     expect(request.request.headers.get('Authorization')).toBe('Bearer old-token');
     request.flush({
       data: {
@@ -174,14 +177,12 @@ describe('AuthService', () => {
         },
         issuedAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 60_000).toISOString(),
-        token: 'new-token',
       },
     });
 
     expect(browserService.isAuthenticated()).toBe(true);
-    expect(browserService.createApiAuthHeaders().get('Authorization')).toBe(
-      'Bearer new-token',
-    );
+    expect(browserService.createApiAuthHeaders().has('Authorization')).toBe(false);
+    expect(window.localStorage.getItem('vensight.dashboard.session')).not.toContain('token');
     httpMock.verify();
   });
 

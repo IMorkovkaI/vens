@@ -43,7 +43,7 @@ The intended production split is:
 }
 ```
 
-This keeps Angular/browser calls relative to `/api` while Northflank owns backend secrets, Prisma, AI providers, and search providers.
+This keeps Angular/browser calls relative to `/api` while Northflank owns backend secrets, Prisma, AI providers, search providers, and HttpOnly dashboard session cookies.
 
 ## Northflank API
 
@@ -81,6 +81,7 @@ OPENROUTER_API_KEY="..."
 OPENROUTER_MODEL="qwen/qwen-2.5-7b-instruct:free"
 GOOGLE_AI_API_KEY="..."
 GOOGLE_MODEL="gemini-2.5-flash"
+AI_FALLBACK_PROVIDERS="openrouter,google,mock"
 SEARCH_API_KEY="..."
 SEARCH_API_ENGINE="google"
 SEARCH_FALLBACK_PROVIDER="tavily"
@@ -103,6 +104,8 @@ If Vercel hosts Angular SSR while Northflank hosts `/api`, set the `/api/*` rewr
 
 Dashboard login on Vercel depends on Northflank being live. The browser calls `/api/auth/login`, Vercel rewrites that request to Northflank, and Northflank validates the user against Supabase/Prisma sessions. If the rewrite still contains the placeholder host, or Northflank is missing `DATABASE_URL`, `DIRECT_URL`, `SESSION_SECRET`, migrations, or a seeded/admin account, login will fail even though the public frontend renders.
 
+Hosted browser sessions use an HttpOnly `SameSite=Lax` cookie set by the API response. Keep dashboard API calls routed through Vercel `/api/*` rewrites so the cookie remains same-origin from the browser's point of view.
+
 ## Supabase
 
 Before Northflank uses Supabase:
@@ -114,7 +117,9 @@ npm run supabase:rls:enable
 npm run supabase:rls:check
 ```
 
-Run `npm run prisma:seed` only when intentionally creating or refreshing seed data. The discovery queue table comes from `prisma/migrations/20260524080000_add_discovery_candidates`; it is only needed if the optional queue endpoints are used.
+Run `npm run prisma:seed` only when intentionally creating or refreshing seed data. The discovery queue table comes from `prisma/migrations/20260524080000_add_discovery_candidates`; it is only needed if the optional queue endpoints are used. Registered-user daily limits use `prisma/migrations/20260526015000_add_daily_usage`; deploy it before enabling one-search/one-analysis-per-day contributor access.
+
+Contributor daily limits are enforced per account and with a small hashed-network daily cap to reduce account farming. Admin and developer roles are exempt from those contributor caps.
 
 Configure Supabase backups and test at least one restore before exposing real users.
 
@@ -128,6 +133,7 @@ After deployment, verify:
 - `GET /api/health` returns `status: ok` and `service: vensight-api` without exposing runtime/provider details.
 - Login works for the intended admin account.
 - Protected listing create/edit works for admin/developer roles.
+- A registered user can run one discovery search and one AI URL analysis per UTC day, but cannot create listings.
 - `POST /api/ai/provider-check` works for the selected provider and does not create listings.
 - `GET /sitemap.xml` uses `https://vensight.com` URLs.
 - `GET /robots.txt` blocks `/dashboard` and `/api`.
@@ -136,7 +142,7 @@ After deployment, verify:
 ## Remaining Production Work
 
 - Set a strong `SEEDED_ADMIN_PASSWORD` before production seeding, or replace seeded admin with an invite/onboarding flow.
-- Token refresh is implemented for bearer sessions. Consider a later HttpOnly cookie migration or shorter TTLs before larger-scale real-user traffic.
+- Token refresh is implemented for HttpOnly browser sessions and bearer-compatible API clients. Consider shorter TTLs before larger-scale real-user traffic.
 - Add CI later for `typecheck`, `test`, `prisma:validate`, and `build`.
 - Add Jasmine/Karma later if Angular browser-runner parity is still desired.
 - Structured Northflank-friendly request/error logs are implemented. Add hosted error monitoring later if traffic grows beyond manual log review.

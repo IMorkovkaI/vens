@@ -56,6 +56,7 @@ export async function extractPageContent(
       options.resolveHostname,
       options.timeoutMs ?? FETCH_TIMEOUT_MS,
     );
+    await assertSafeResponseUrl(response.url || normalizedUrl, options.resolveHostname);
     const contentType = response.headers.get('content-type') ?? '';
     const contentLength = Number(response.headers.get('content-length') ?? 0);
 
@@ -202,12 +203,23 @@ async function defaultResolveHostname(hostname: string): Promise<string[]> {
 function isPrivateAddress(address: string): boolean {
   if (address.includes(':')) {
     const normalized = address.toLowerCase();
+    const ipv4MappedAddress = readIpv4MappedAddress(normalized);
+
+    if (ipv4MappedAddress) {
+      return isPrivateAddress(ipv4MappedAddress);
+    }
 
     return (
+      normalized === '::' ||
       normalized === '::1' ||
       normalized.startsWith('fc') ||
       normalized.startsWith('fd') ||
-      normalized.startsWith('fe80:')
+      normalized.startsWith('fe80:') ||
+      normalized.startsWith('ff') ||
+      normalized.startsWith('2001:db8:') ||
+      normalized.startsWith('2001:2:') ||
+      normalized.startsWith('2001:10:') ||
+      normalized.startsWith('2002:')
     );
   }
 
@@ -218,15 +230,37 @@ function isPrivateAddress(address: string): boolean {
   }
 
   const [first = 0, second = 0] = octets;
+  const third = octets[2] ?? 0;
 
   return (
+    first === 0 ||
     first === 10 ||
     first === 127 ||
+    (first === 100 && second >= 64 && second <= 127) ||
     (first === 169 && second === 254) ||
     (first === 172 && second >= 16 && second <= 31) ||
+    (first === 192 && second === 0 && third === 0) ||
     (first === 192 && second === 168) ||
-    first === 0
+    (first === 192 && second === 0 && third === 2) ||
+    (first === 198 && (second === 18 || second === 19)) ||
+    (first === 198 && second === 51 && third === 100) ||
+    (first === 203 && second === 0 && third === 113) ||
+    first >= 224
   );
+}
+
+async function assertSafeResponseUrl(
+  responseUrl: string,
+  resolveHostname: ExtractPageContentOptions['resolveHostname'],
+): Promise<void> {
+  if (!responseUrl) {
+    return;
+  }
+
+  const normalizedUrl = normalizeHttpsAnalysisUrl(responseUrl);
+  const parsedUrl = new URL(normalizedUrl);
+
+  await assertPublicHostname(parsedUrl.hostname, resolveHostname);
 }
 
 async function fetchWithValidatedRedirects(
@@ -321,6 +355,16 @@ async function readResponseTextWithLimit(response: Response, maxBytes: number): 
 
 function isRedirectResponse(status: number): boolean {
   return status >= 300 && status < 400;
+}
+
+function readIpv4MappedAddress(address: string): string {
+  const mappedMatch = address.match(/^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/);
+
+  if (mappedMatch?.[1]) {
+    return mappedMatch[1];
+  }
+
+  return '';
 }
 
 function createUnavailableSource(
