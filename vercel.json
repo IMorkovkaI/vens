@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://REPLACE_WITH_NORTHFLANK_BACKEND_HOST/api/$1"
+      "destination": "https://p01--vensight-prod--xqblcdsm2j94.code.run/api/$1"
     }
   ]
 }
