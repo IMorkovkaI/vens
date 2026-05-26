@@ -1207,19 +1207,48 @@
   }
 
   @media (max-width: 720px) {
-    .app-header nav {
-      flex-wrap: wrap;
-      gap: var(--space-sm);
+    .main-nav {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.65rem;
+      padding: 0.7rem 1rem 0.85rem;
     }
 
-    .app-header nav > div {
+    .brand-link {
+      width: max-content;
+      max-width: 100%;
+      gap: 0.65rem;
+    }
+
+    .brand-name {
+      color: var(--color-panel);
+      font-size: clamp(1.15rem, 5.4vw, 1.45rem);
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .app-header .brand-mark {
+      width: 2.35rem;
+      height: 2.35rem;
+      flex: 0 0 auto;
+      font-size: 1.45rem;
+    }
+
+    .main-nav-links {
+      display: grid !important;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       width: 100%;
-      overflow-x: auto;
-      padding-bottom: var(--space-2xs);
+      gap: 0.35rem;
+      overflow: visible;
+      padding: 0;
     }
 
     .nav-link {
-      flex: 0 0 auto;
+      min-height: 2.45rem;
+      width: 100%;
+      padding: 0 0.45rem;
+      font-size: clamp(0.66rem, 2.9vw, 0.78rem);
+      text-align: center;
     }
 
     .page-hero-media::before {

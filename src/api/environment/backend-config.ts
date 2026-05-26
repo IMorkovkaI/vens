@@ -24,6 +24,7 @@ export interface BackendRuntimeStatus {
   };
   ai: {
     selectedProvider: AiProviderId;
+    fallbackProviders: AiProviderId[];
     providers: Record<AiProviderId, AiProviderRuntimeConfig>;
   };
   search: {
@@ -71,6 +72,7 @@ export function getBackendRuntimeStatus(): BackendRuntimeStatus {
     },
     ai: {
       selectedProvider: getConfiguredAiProvider(),
+      fallbackProviders: getConfiguredAiFallbackProviders(),
       providers: {
         mock: getAiProviderRuntimeConfig('mock'),
         ollama: getAiProviderRuntimeConfig('ollama'),
@@ -93,16 +95,28 @@ export function getBackendRuntimeStatus(): BackendRuntimeStatus {
 export function getConfiguredAiProvider(): AiProviderId {
   const provider = process.env['AI_PROVIDER']?.trim().toLowerCase();
 
-  if (
-    provider === 'ollama' ||
-    provider === 'groq' ||
-    provider === 'openrouter' ||
-    provider === 'google'
-  ) {
+  if (isAiProviderId(provider)) {
     return provider;
   }
 
   return 'mock';
+}
+
+export function getConfiguredAiFallbackProviders(): AiProviderId[] {
+  const primaryProvider = getConfiguredAiProvider();
+  const configuredProviders = (process.env['AI_FALLBACK_PROVIDERS'] ?? '')
+    .split(',')
+    .map((provider) => provider.trim().toLowerCase())
+    .filter(isAiProviderId);
+  const uniqueProviders = new Set<AiProviderId>();
+
+  for (const provider of configuredProviders) {
+    if (provider !== primaryProvider) {
+      uniqueProviders.add(provider);
+    }
+  }
+
+  return [...uniqueProviders];
 }
 
 export function getAiProviderRuntimeConfig(provider: AiProviderId): AiProviderRuntimeConfig {
@@ -146,6 +160,16 @@ function getMissingEnv(provider: AiProviderId): string[] {
 
 function hasEnvValue(envName: string): boolean {
   return Boolean(process.env[envName]?.trim());
+}
+
+function isAiProviderId(provider: string | undefined): provider is AiProviderId {
+  return (
+    provider === 'mock' ||
+    provider === 'ollama' ||
+    provider === 'groq' ||
+    provider === 'openrouter' ||
+    provider === 'google'
+  );
 }
 
 function getSearchProvider(): string {

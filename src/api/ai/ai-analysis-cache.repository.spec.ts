@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { PrismaAiAnalysisCacheRepository } from '../database/prisma-ai-analysis-cache.repository';
 import { ApiAiAnalysisService } from './ai-analysis.service';
 import {
@@ -10,6 +10,7 @@ import { AiAnalysisResult, AiAnalysisSource } from './ai-analysis.types';
 
 const originalDatabaseUrl = process.env['DATABASE_URL'];
 const originalAiProvider = process.env['AI_PROVIDER'];
+const originalAiFallbackProviders = process.env['AI_FALLBACK_PROVIDERS'];
 const originalOpenRouterApiKey = process.env['OPENROUTER_API_KEY'];
 
 const analysisResult: AiAnalysisResult = {
@@ -113,6 +114,10 @@ describe('in-memory AI analysis cache repository contract', () => {
 });
 
 describe('API AI analysis service cache behavior', () => {
+  beforeEach(() => {
+    delete process.env['AI_FALLBACK_PROVIDERS'];
+  });
+
   afterEach(() => {
     restoreDatabaseUrl();
     resetAiAnalysisCacheRepositoryForTests();
@@ -238,6 +243,12 @@ function restoreAiProvider(): void {
     delete process.env['AI_PROVIDER'];
   } else {
     process.env['AI_PROVIDER'] = originalAiProvider;
+  }
+
+  if (originalAiFallbackProviders === undefined) {
+    delete process.env['AI_FALLBACK_PROVIDERS'];
+  } else {
+    process.env['AI_FALLBACK_PROVIDERS'] = originalAiFallbackProviders;
   }
 
   if (originalOpenRouterApiKey === undefined) {

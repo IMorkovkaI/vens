@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createAiAnalysisProvider } from './ai-analysis-provider.factory';
 import { GoogleAiAnalysisProvider } from './google-ai-analysis.provider';
 import { MockAiAnalysisProvider } from './mock-ai-analysis.provider';
@@ -6,13 +6,31 @@ import { OpenAiCompatibleAiAnalysisProvider } from './openai-compatible-ai-analy
 import { OllamaAiAnalysisProvider } from './ollama-ai-analysis.provider';
 
 const originalAiProvider = process.env['AI_PROVIDER'];
+const originalAiFallbackProviders = process.env['AI_FALLBACK_PROVIDERS'];
+const originalGroqApiKey = process.env['GROQ_API_KEY'];
 
 describe('AI analysis provider factory', () => {
+  beforeEach(() => {
+    delete process.env['AI_FALLBACK_PROVIDERS'];
+  });
+
   afterEach(() => {
     if (originalAiProvider === undefined) {
       delete process.env['AI_PROVIDER'];
     } else {
       process.env['AI_PROVIDER'] = originalAiProvider;
+    }
+
+    if (originalAiFallbackProviders === undefined) {
+      delete process.env['AI_FALLBACK_PROVIDERS'];
+    } else {
+      process.env['AI_FALLBACK_PROVIDERS'] = originalAiFallbackProviders;
+    }
+
+    if (originalGroqApiKey === undefined) {
+      delete process.env['GROQ_API_KEY'];
+    } else {
+      process.env['GROQ_API_KEY'] = originalGroqApiKey;
     }
   });
 
@@ -46,5 +64,16 @@ describe('AI analysis provider factory', () => {
     process.env['AI_PROVIDER'] = 'unsupported';
 
     expect(createAiAnalysisProvider()).toBeInstanceOf(MockAiAnalysisProvider);
+  });
+
+  it('uses configured fallback providers when the primary provider fails', async () => {
+    process.env['AI_PROVIDER'] = 'groq';
+    process.env['GROQ_API_KEY'] = '';
+    process.env['AI_FALLBACK_PROVIDERS'] = 'mock';
+
+    const provider = createAiAnalysisProvider();
+    const result = await provider.analyzeUrl('fallback-provider.example');
+
+    expect(result.provider).toBe('mock');
   });
 });

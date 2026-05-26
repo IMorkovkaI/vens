@@ -1,6 +1,11 @@
-import { AiAnalysisProvider } from './ai-analysis.types';
+import {
+  AiAnalysisProvider,
+  AiAnalysisResult,
+  AiAnalysisSource,
+} from './ai-analysis.types';
 import {
   getAiProviderRuntimeConfig,
+  getConfiguredAiFallbackProviders,
   getCloudAiApiKey,
   getConfiguredAiProvider,
   getProviderModel,
@@ -11,8 +16,19 @@ import { OpenAiCompatibleAiAnalysisProvider } from './openai-compatible-ai-analy
 import { OllamaAiAnalysisProvider } from './ollama-ai-analysis.provider';
 
 export function createAiAnalysisProvider(): AiAnalysisProvider {
-  const provider = getConfiguredAiProvider();
+  const primaryProviderId = getConfiguredAiProvider();
+  const fallbackProviderIds = getConfiguredAiFallbackProviders();
+  const primaryProvider = createAiAnalysisProviderById(primaryProviderId);
+  const fallbackProviders = fallbackProviderIds.map(createAiAnalysisProviderById);
 
+  if (!fallbackProviders.length) {
+    return primaryProvider;
+  }
+
+  return new FallbackAiAnalysisProvider(primaryProvider, fallbackProviders);
+}
+
+function createAiAnalysisProviderById(provider: ReturnType<typeof getConfiguredAiProvider>): AiAnalysisProvider {
   switch (provider) {
     case 'ollama':
       return new OllamaAiAnalysisProvider();
@@ -43,5 +59,40 @@ export function createAiAnalysisProvider(): AiAnalysisProvider {
       return new GoogleAiAnalysisProvider();
     default:
       return new MockAiAnalysisProvider();
+  }
+}
+
+class FallbackAiAnalysisProvider implements AiAnalysisProvider {
+  readonly config;
+
+  constructor(
+    private readonly primaryProvider: AiAnalysisProvider,
+    private readonly fallbackProviders: AiAnalysisProvider[],
+  ) {
+    this.config = primaryProvider.config;
+  }
+
+  normalizeUrl(url: string): string {
+    return this.primaryProvider.normalizeUrl(url);
+  }
+
+  async analyzeUrl(
+    url: string,
+    source?: AiAnalysisSource,
+  ): Promise<AiAnalysisResult> {
+    const providers = [this.primaryProvider, ...this.fallbackProviders];
+    let lastError: unknown;
+
+    for (const provider of providers) {
+      try {
+        return await provider.analyzeUrl(url, source);
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    throw lastError instanceof Error
+      ? lastError
+      : new Error('AI analysis failed for every configured provider.');
   }
 }
