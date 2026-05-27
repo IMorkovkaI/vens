@@ -42,6 +42,9 @@ describe('HomePageComponent', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Premium company intelligence directory');
+    expect(compiled.textContent).toContain('Contributor access');
+    expect(compiled.textContent).toContain('Sign in');
+    expect(compiled.textContent).toContain('Create account');
     expect(compiled.textContent).toContain('Vensight index');
     expect(compiled.textContent).toContain('Featured companies');
     expect(compiled.textContent).toContain('NovaLens');

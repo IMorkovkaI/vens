@@ -12,20 +12,20 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
   template: `
     <section class="page-hero page-hero-media hero-bg-home">
       <div class="hero-shell mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
-        <div>
-          <p class="eyebrow">
+        <div class="home-hero-copy">
+          <p class="eyebrow home-motion home-motion-1">
             Premium company intelligence directory
           </p>
-          <h1 class="mt-5 max-w-4xl text-4xl font-semibold tracking-normal text-slate-950 sm:text-5xl">
+          <h1 class="home-motion home-motion-2 mt-5 max-w-4xl text-4xl font-semibold tracking-normal text-slate-950 sm:text-5xl">
             Read the market before the market moves.
           </h1>
-          <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+          <p class="home-motion home-motion-3 mt-6 max-w-2xl text-lg leading-8 text-slate-600">
             Vensight turns company URLs, category signals, and editorial review into a premium searchable index for operators, analysts, and launch teams.
           </p>
-          <p class="mt-3 max-w-2xl text-sm font-semibold text-slate-500">
+          <p class="home-motion home-motion-4 mt-3 max-w-2xl text-sm font-semibold text-slate-500">
             Current public catalog uses seeded demo profiles while reviewed launch listings are prepared.
           </p>
-          <form class="hero-search mt-8" (ngSubmit)="submitSearch()">
+          <form class="hero-search home-motion home-motion-5 mt-8" (ngSubmit)="submitSearch()">
             <label class="block">
               <span class="sr-only">Search companies</span>
               <input
@@ -42,7 +42,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
             </button>
           </form>
 
-          <div class="mt-4 flex flex-wrap gap-3">
+          <div class="home-motion home-motion-6 mt-4 flex flex-wrap gap-3">
             <a routerLink="/companies" class="btn-subtle focus-ring">
               Browse all
             </a>
@@ -51,7 +51,24 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
             </a>
           </div>
 
-          <div class="hero-kpi-grid mt-8">
+          <div class="home-auth-strip home-motion home-motion-7 mt-5">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wide text-slate-500">Contributor access</p>
+              <p class="mt-1 text-sm font-semibold text-slate-600">
+                Sign in to run discovery and AI URL analysis.
+              </p>
+            </div>
+            <div class="home-auth-actions">
+              <a routerLink="/dashboard/login" class="auth-link auth-link-primary focus-ring">
+                Sign in
+              </a>
+              <a routerLink="/dashboard/register" class="auth-link focus-ring">
+                Create account
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-kpi-grid home-motion home-motion-8 mt-8">
             <div class="hero-kpi">
               <p class="text-2xl font-semibold text-slate-950">{{ companyCount() }}</p>
               <p class="mt-1 text-xs font-semibold text-slate-500">Company profiles</p>
@@ -70,7 +87,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
             </div>
           </div>
 
-          <div class="trust-row mt-8">
+          <div class="trust-row home-motion home-motion-9 mt-8">
             <p class="text-xs font-bold uppercase tracking-wide text-slate-500">Built for discovery teams</p>
             <span class="brand-chip">Founders</span>
             <span class="brand-chip">Agencies</span>
@@ -79,7 +96,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
           </div>
         </div>
 
-        <aside class="market-panel p-5 lg:p-6" aria-label="Directory market snapshot">
+        <aside class="market-panel home-market-motion p-5 lg:p-6" aria-label="Directory market snapshot">
           <div class="flex items-start justify-between gap-4">
             <div>
               <p class="text-xs font-bold uppercase text-slate-300">Vensight index</p>
@@ -124,7 +141,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
 
     <section class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
       <div class="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-        <div>
+        <div class="home-section-copy">
           <p class="eyebrow">Powered by AI</p>
           <h2 class="mt-3 text-3xl font-semibold text-slate-950">Structured signals for business discovery.</h2>
           <p class="mt-3 max-w-xl text-base leading-7 text-slate-600">
@@ -143,7 +160,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
           </div>
         </div>
 
-        <div class="surface-card insight-panel p-6">
+        <div class="surface-card insight-panel home-insight-motion p-6">
           <div class="flex items-center justify-between gap-4">
             <div>
               <p class="text-sm font-semibold text-slate-950">AI analysis preview</p>
