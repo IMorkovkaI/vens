@@ -114,6 +114,7 @@ This is the project-level list of things that still need manual setup outside th
 - [x] Optimize Lighthouse scores for public SEO routes. Current measured score: desktop 100, mobile 92.
 - Add production smoke checks for `/`, `/companies`, `/dashboard/login`, `/api/health`, protected dashboard write endpoints, provider-check, sitemap, and robots.
 - Include `https://vensight-phi.vercel.app/` in the first Vercel smoke pass while the custom domain is pending.
+- After SEO metadata changes, force a Vercel redeploy and re-check homepage canonical/Open Graph tags because the homepage is the highest-value crawler entry point.
 - [x] Sanitize production API error responses so internal database/provider details stay server-side.
 - [x] Add request IDs and safe structured API request logs.
 - [x] Harden AI URL extraction against localhost, private, reserved, mapped-private, and unsafe redirected hosts before fetching.
@@ -122,6 +123,7 @@ This is the project-level list of things that still need manual setup outside th
 ## Content And SEO
 
 - [x] Add polished fictional seed/mock companies for every launch category.
+- [x] Keep public copy clear that the current directory is seeded demo data.
 - Replace fictional seed content with reviewed real listings only when launch sources are ready.
 - [x] Add legal pages and data-source disclaimers before importing third-party data.
 - [x] Add footer access to legal/data-source disclaimer pages.

@@ -1,10 +1,16 @@
 # Vensight
 
+[![CI](https://github.com/IMorkovkaI/vens/actions/workflows/ci.yml/badge.svg)](https://github.com/IMorkovkaI/vens/actions/workflows/ci.yml)
+
 Vensight is an Angular SSR business directory with a Node.js API, Prisma/PostgreSQL persistence, dashboard listing tools, and AI-assisted company analysis.
+
+Live demo: [https://vensight-phi.vercel.app](https://vensight-phi.vercel.app)  
+API health through the Vercel proxy: [https://vensight-phi.vercel.app/api/health](https://vensight-phi.vercel.app/api/health)
 
 ## Current MVP
 
 - Public homepage, company listing, category pages, company detail pages, compare page, legal pages, and data-source notes.
+- Seeded demo directory with 40 fictional company profiles across 20 launch categories.
 - Dashboard authentication with user, developer, and admin roles.
 - Admin/developer listing create and edit flow.
 - Content-aware HTTPS URL analysis with mock, Ollama, Groq, OpenRouter, and Google provider abstractions.
@@ -111,9 +117,26 @@ npm run supabase:version
 
 ## Quality Gates
 
-The repo includes a GitHub Actions CI workflow that runs Prisma validation, TypeScript typechecking, unit/API tests, and the production build on pushes and pull requests. Current tests cover API auth/session behavior, provider fallback, SSRF URL extraction guards, directory repositories, dashboard components, and public SEO/data flows.
+The repo includes a GitHub Actions CI workflow that runs Prisma validation, TypeScript typechecking, unit/API tests, and the production build on pushes and pull requests. Current tests cover API auth/session behavior, provider fallback, SSRF URL extraction guards, directory repositories, dashboard components, public SEO/data flows, and SSR cache policy.
+
+Current local verification target:
+
+```bash
+npm run prisma:validate
+npm run typecheck
+npm run test
+npm run build
+```
 
 Supabase CLI workflows are documented in [docs/supabase-cli.md](docs/supabase-cli.md). Prisma migrations remain the app schema source of truth.
+
+## Demo Media
+
+Add portfolio screenshots or GIFs under `docs/assets/` after each major UI polish pass:
+
+- Admin flow: dashboard login, analytics, create/edit listing, and developer invite.
+- Developer flow: discovery search, AI URL analysis, and generated profile review.
+- Public flow: homepage, company search, category drilldown, company detail, and compare page.
 
 ## Deployment Shape
 
@@ -131,6 +154,6 @@ This repo includes:
 - Dockerfile-based backend deployment for Northflank with `/api/health` checks.
 - Docker Compose for a local PostgreSQL-backed app stack.
 
-Set `PUBLIC_SITE_URL` on Vercel to the production domain so SSR canonical and Open Graph URLs never fall back to an internal localhost render origin.
+Set `PUBLIC_SITE_URL=https://vensight-phi.vercel.app` on Vercel and Northflank while the project uses the Vercel production domain so SSR canonical and Open Graph URLs never fall back to an internal localhost render origin. Force a Vercel redeploy after metadata changes if the homepage edge cache still serves stale Open Graph tags.
 
 See [docs/deployment.md](docs/deployment.md) and [docs/manual-setup.md](docs/manual-setup.md) for the current deployment checklist.

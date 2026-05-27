@@ -21,6 +21,16 @@ const SESSION_STORAGE_KEY = 'vensight.dashboard.session';
 const ACCOUNTS_STORAGE_KEY = 'vensight.dashboard.accounts';
 const LEGACY_SEEDED_ADMIN_EMAIL = 'imarkovychi@gmail.com';
 const LOCAL_SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
+const ACTIVE_HOSTED_FRONTEND_HOSTS = new Set(['vensight-phi.vercel.app']);
+
+export function isHostedFrontendHostname(hostname: string): boolean {
+  const normalizedHostname = hostname.trim().toLowerCase();
+
+  return (
+    ACTIVE_HOSTED_FRONTEND_HOSTS.has(normalizedHostname) ||
+    normalizedHostname.endsWith('.vercel.app')
+  );
+}
 
 @Injectable({
   providedIn: 'root',
@@ -469,12 +479,6 @@ export class AuthService {
     }
 
     // Hosted frontends must use Northflank for auth instead of local browser accounts.
-    const hostname = window.location.hostname.toLowerCase();
-
-    return (
-      hostname.endsWith('.vercel.app') ||
-      hostname === 'vensight.com' ||
-      hostname === 'www.vensight.com'
-    );
+    return isHostedFrontendHostname(window.location.hostname);
   }
 }

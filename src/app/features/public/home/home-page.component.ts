@@ -22,6 +22,9 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
           <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
             Vensight turns company URLs, category signals, and editorial review into a premium searchable index for operators, analysts, and launch teams.
           </p>
+          <p class="mt-3 max-w-2xl text-sm font-semibold text-slate-500">
+            Current public catalog uses seeded demo profiles while reviewed launch listings are prepared.
+          </p>
           <form class="hero-search mt-8" (ngSubmit)="submitSearch()">
             <label class="block">
               <span class="sr-only">Search companies</span>
@@ -196,7 +199,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
       <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <h2 class="text-2xl font-semibold text-slate-950">Featured companies</h2>
-          <p class="mt-2 text-sm text-slate-600">A sample of polished profiles from the launch directory.</p>
+          <p class="mt-2 text-sm text-slate-600">A sample of polished seeded demo profiles from the launch directory.</p>
         </div>
         <a routerLink="/companies" class="text-link focus-ring">
           See all companies

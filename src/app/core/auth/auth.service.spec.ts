@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from './auth.service';
+import { AuthService, isHostedFrontendHostname } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -228,5 +228,12 @@ describe('AuthService', () => {
       error: 'Invalid email or password.',
     });
     httpMock.verify();
+  });
+
+  it('should treat Vercel deployments as hosted frontends', () => {
+    expect(isHostedFrontendHostname('vensight-phi.vercel.app')).toBe(true);
+    expect(isHostedFrontendHostname('preview-vensight.vercel.app')).toBe(true);
+    expect(isHostedFrontendHostname('localhost')).toBe(false);
+    expect(isHostedFrontendHostname('vensight.com')).toBe(false);
   });
 });

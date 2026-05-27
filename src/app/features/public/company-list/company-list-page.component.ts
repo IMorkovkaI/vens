@@ -18,7 +18,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
           <div>
             <h1 class="text-4xl font-semibold text-slate-950">Browse companies</h1>
             <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-              Search the directory by company, category, summary, and tags.
+              Search the seeded demo directory by company, category, summary, and tags.
             </p>
           </div>
           <a routerLink="/" class="return-link focus-ring">

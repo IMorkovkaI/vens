@@ -11,6 +11,7 @@ import { apiRouter } from './api/api.routes';
 import { verifySessionToken } from './api/auth/session-token';
 import { getAllowedOrigins, isApiOnlyMode } from './api/environment/backend-config';
 import { buildRateLimitKeys } from './api/security/rate-limit-keys';
+import { applyHtmlNoStoreCacheHeaders } from './api/security/cache-policy';
 import { registerSeoRoutes } from './api/seo/seo-routes';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
@@ -54,6 +55,7 @@ if (!apiOnly) {
  * Handle all other requests by rendering the Angular application.
  */
 if (angularApp) {
+  app.use(applyDocumentCacheHeaders);
   app.use((req, res, next) => {
     angularApp
       .handle(req)
@@ -192,6 +194,15 @@ function applySecurityHeaders(
     res.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   }
 
+  next();
+}
+
+function applyDocumentCacheHeaders(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+): void {
+  applyHtmlNoStoreCacheHeaders(req, res);
   next();
 }
 

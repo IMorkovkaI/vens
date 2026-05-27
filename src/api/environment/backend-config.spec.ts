@@ -54,15 +54,15 @@ describe('backend runtime config', () => {
 
   it('parses allowed API origins from deployment env without secrets', () => {
     process.env['ALLOWED_ORIGINS'] =
-      'https://vensight.vercel.app, https://app.vensight.com';
+      'https://vensight-phi.vercel.app, https://preview-vensight.vercel.app';
 
     expect(getAllowedOrigins()).toEqual([
-      'https://vensight.vercel.app',
-      'https://app.vensight.com',
+      'https://vensight-phi.vercel.app',
+      'https://preview-vensight.vercel.app',
     ]);
     expect(getBackendRuntimeStatus().http.allowedOrigins).toEqual([
-      'https://vensight.vercel.app',
-      'https://app.vensight.com',
+      'https://vensight-phi.vercel.app',
+      'https://preview-vensight.vercel.app',
     ]);
   });
 
