@@ -34,7 +34,7 @@ The intended production split is:
 - Northflank: Node.js API host using the same built server artifact with `API_ONLY=true`.
 - Supabase: PostgreSQL.
 
-`vercel.json` contains a placeholder `/api/*` rewrite. Replace `https://REPLACE_WITH_NORTHFLANK_BACKEND_HOST` with the final Northflank public service URL before production traffic uses Vercel:
+`vercel.json` contains the `/api/*` rewrite to the Northflank public service URL:
 
 ```json
 {
@@ -66,9 +66,10 @@ SEEDED_ADMIN_EMAIL="imarkovychi@gmail.com"
 SEEDED_ADMIN_PASSWORD="long-random-initial-admin-password"
 TRUST_PROXY="true"
 API_REQUEST_LOGS="true"
-ALLOWED_ORIGINS="https://vensight.com,https://your-vercel-project.vercel.app"
-PUBLIC_SITE_URL="https://vensight.com"
-AI_PROVIDER="mock"
+ALLOWED_ORIGINS="https://vensight-phi.vercel.app,https://your-vercel-project.vercel.app"
+PUBLIC_SITE_URL="https://vensight-phi.vercel.app"
+AI_PROVIDER="groq"
+AI_FALLBACK_PROVIDERS="openrouter,google,mock"
 SEARCH_PROVIDER="disabled"
 ```
 
@@ -81,14 +82,13 @@ OPENROUTER_API_KEY="..."
 OPENROUTER_MODEL="qwen/qwen-2.5-7b-instruct:free"
 GOOGLE_AI_API_KEY="..."
 GOOGLE_MODEL="gemini-2.5-flash"
-AI_FALLBACK_PROVIDERS="openrouter,google,mock"
 SEARCH_API_KEY="..."
 SEARCH_API_ENGINE="google"
 SEARCH_FALLBACK_PROVIDER="tavily"
 TAVILY_API_KEY="..."
 ```
 
-Keep `AI_PROVIDER=mock` and `SEARCH_PROVIDER=disabled` unless you are intentionally testing provider calls.
+For an employer-facing demo, use `AI_PROVIDER=groq` with `AI_FALLBACK_PROVIDERS=openrouter,google,mock` so the live URL analysis path attempts a real backend provider first and still degrades safely. Keep `SEARCH_PROVIDER=disabled` unless you are intentionally testing provider calls or have configured SearchApi/Tavily quota.
 
 `API_REQUEST_LOGS=true` emits safe structured API request logs with request IDs, response status, duration, IP, signed dashboard role when available, and user agent. It does not log request bodies, bearer tokens, passwords, API keys, database URLs, or provider responses. Production API errors include a request ID in the browser response so Northflank logs can be searched without exposing internals.
 
@@ -97,12 +97,14 @@ Keep `AI_PROVIDER=mock` and `SEARCH_PROVIDER=disabled` unless you are intentiona
 Vercel should not receive database URLs, Prisma credentials, session secrets, or provider API keys. The only required production value expected by the frontend/SSR surface is:
 
 ```bash
-PUBLIC_SITE_URL="https://vensight.com"
+PUBLIC_SITE_URL="https://vensight-phi.vercel.app"
 ```
 
 If Vercel hosts Angular SSR while Northflank hosts `/api`, set the `/api/*` rewrite in `vercel.json` before testing dashboard flows. If a preview deployment needs API access, add that exact preview origin to Northflank `ALLOWED_ORIGINS`.
 
-Dashboard login on Vercel depends on Northflank being live. The browser calls `/api/auth/login`, Vercel rewrites that request to Northflank, and Northflank validates the user against Supabase/Prisma sessions. If the rewrite still contains the placeholder host, or Northflank is missing `DATABASE_URL`, `DIRECT_URL`, `SESSION_SECRET`, migrations, or a seeded/admin account, login will fail even though the public frontend renders.
+Set `PUBLIC_SITE_URL` in Vercel as well as Northflank. Angular SSR uses it for canonical and Open Graph URLs, while the API uses it for sitemap and robots assets. If it is missing, Vensight falls back to the current Vercel production URL instead of an internal localhost render origin.
+
+Dashboard login on Vercel depends on Northflank being live. The browser calls `/api/auth/login`, Vercel rewrites that request to Northflank, and Northflank validates the user against Supabase/Prisma sessions. If Northflank is missing `DATABASE_URL`, `DIRECT_URL`, `SESSION_SECRET`, migrations, or a seeded/admin account, login will fail even though the public frontend renders.
 
 Hosted browser sessions use an HttpOnly `SameSite=Lax` cookie set by the API response. Keep dashboard API calls routed through Vercel `/api/*` rewrites so the cookie remains same-origin from the browser's point of view.
 
@@ -135,7 +137,7 @@ After deployment, verify:
 - Protected listing create/edit works for admin/developer roles.
 - A registered user can run one discovery search and one AI URL analysis per UTC day, but cannot create listings.
 - `POST /api/ai/provider-check` works for the selected provider and does not create listings.
-- `GET /sitemap.xml` uses `https://vensight.com` URLs.
+- `GET /sitemap.xml` uses `https://vensight-phi.vercel.app` URLs.
 - `GET /robots.txt` blocks `/dashboard` and `/api`.
 - Browser network requests call `/api/*` on Vercel and are rewritten to Northflank.
 
@@ -143,7 +145,7 @@ After deployment, verify:
 
 - Set a strong `SEEDED_ADMIN_PASSWORD` before production seeding, or replace seeded admin with an invite/onboarding flow.
 - Token refresh is implemented for HttpOnly browser sessions and bearer-compatible API clients. Consider shorter TTLs before larger-scale real-user traffic.
-- Add CI later for `typecheck`, `test`, `prisma:validate`, and `build`.
-- Add Jasmine/Karma later if Angular browser-runner parity is still desired.
+- GitHub Actions CI runs `prisma:validate`, `typecheck`, `test`, and `build`.
+- Jasmine/Karma browser-runner parity is implemented for Angular specs; API/server specs remain on Vitest.
 - Structured Northflank-friendly request/error logs are implemented. Add hosted error monitoring later if traffic grows beyond manual log review.
 - Finalize seeded companies/categories, Open Graph imagery, and launch copy.

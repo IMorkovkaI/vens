@@ -16,6 +16,33 @@ describe('SEO assets', () => {
     }
   });
 
+  it('falls back to the Vercel production URL instead of localhost', () => {
+    const originalPublicSiteUrl = process.env['PUBLIC_SITE_URL'];
+    const originalVercelProductionUrl = process.env['VERCEL_PROJECT_PRODUCTION_URL'];
+    const originalVercelUrl = process.env['VERCEL_URL'];
+    delete process.env['PUBLIC_SITE_URL'];
+    delete process.env['VERCEL_PROJECT_PRODUCTION_URL'];
+    delete process.env['VERCEL_URL'];
+
+    expect(getPublicBaseUrl('http://localhost:34753')).toBe('https://vensight-phi.vercel.app');
+
+    restoreEnvValue('PUBLIC_SITE_URL', originalPublicSiteUrl);
+    restoreEnvValue('VERCEL_PROJECT_PRODUCTION_URL', originalVercelProductionUrl);
+    restoreEnvValue('VERCEL_URL', originalVercelUrl);
+  });
+
+  it('uses Vercel deployment URL env vars when PUBLIC_SITE_URL is not set', () => {
+    const originalPublicSiteUrl = process.env['PUBLIC_SITE_URL'];
+    const originalVercelProductionUrl = process.env['VERCEL_PROJECT_PRODUCTION_URL'];
+    delete process.env['PUBLIC_SITE_URL'];
+    process.env['VERCEL_PROJECT_PRODUCTION_URL'] = 'vensight.example';
+
+    expect(getPublicBaseUrl('http://localhost:4000')).toBe('https://vensight.example');
+
+    restoreEnvValue('PUBLIC_SITE_URL', originalPublicSiteUrl);
+    restoreEnvValue('VERCEL_PROJECT_PRODUCTION_URL', originalVercelProductionUrl);
+  });
+
   it('builds a crawlable robots policy with private routes blocked', () => {
     const robots = buildRobotsTxt('https://vensight.example');
 
@@ -57,3 +84,12 @@ describe('SEO assets', () => {
     expect(sitemap).toContain('<lastmod>2026-05-24</lastmod>');
   });
 });
+
+function restoreEnvValue(name: string, value: string | undefined): void {
+  if (value === undefined) {
+    delete process.env[name];
+    return;
+  }
+
+  process.env[name] = value;
+}

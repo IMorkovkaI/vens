@@ -85,7 +85,7 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
             <h2 class="text-xl font-semibold text-slate-950">Recent company profiles</h2>
             <p class="mt-1 text-sm text-slate-600">
               @if (authService.canManageListings()) {
-                Manage existing listings in the mock directory.
+                Manage existing listings in the directory.
               } @else {
                 Your role can inspect listings but cannot edit them.
               }

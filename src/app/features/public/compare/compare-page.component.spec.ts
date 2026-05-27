@@ -83,7 +83,7 @@ describe('ComparePageComponent', () => {
     }).compileComponents();
   });
 
-  it('should compare two companies and render mock AI insights', async () => {
+  it('should compare two companies and render AI-assisted insights', async () => {
     const fixture = TestBed.createComponent(ComparePageComponent);
 
     fixture.detectChanges();
@@ -101,6 +101,6 @@ describe('ComparePageComponent', () => {
     expect(text).toContain('NovaLens vs SignalHarbor');
     expect(text).toContain('87% confidence');
     expect(text).toContain('Decision notes');
-    expect(text).toContain('mock-qwen2.5-7b-competitor-comparison');
+    expect(text).toContain('Vensight comparison engine');
   });
 });

@@ -49,16 +49,16 @@ describe('AiAnalysisService', () => {
   });
 
   it('should reject invalid URLs', async () => {
-    await expect(firstValueFrom(service.analyzeUrl('localhost'))).rejects.toThrow(
+    await expectAsync(firstValueFrom(service.analyzeUrl('localhost'))).toBeRejectedWithError(
       'Enter a valid company URL.',
     );
   });
 
   it('should reject plain HTTP URLs with a safe-link warning', async () => {
-    await expect(firstValueFrom(service.analyzeUrl('http://example.com'))).rejects.toThrow(
+    await expectAsync(firstValueFrom(service.analyzeUrl('http://example.com'))).toBeRejectedWithError(
       'Use an HTTPS URL so Vensight can analyze the page safely.',
     );
-    await expect(firstValueFrom(service.checkSelectedProvider('http://example.com'))).rejects.toThrow(
+    await expectAsync(firstValueFrom(service.checkSelectedProvider('http://example.com'))).toBeRejectedWithError(
       'Use an HTTPS URL so Vensight can analyze the page safely.',
     );
   });

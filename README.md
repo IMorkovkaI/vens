@@ -109,11 +109,15 @@ npm run env:check
 npm run supabase:version
 ```
 
+## Quality Gates
+
+The repo includes a GitHub Actions CI workflow that runs Prisma validation, TypeScript typechecking, unit/API tests, and the production build on pushes and pull requests. Current tests cover API auth/session behavior, provider fallback, SSRF URL extraction guards, directory repositories, dashboard components, and public SEO/data flows.
+
 Supabase CLI workflows are documented in [docs/supabase-cli.md](docs/supabase-cli.md). Prisma migrations remain the app schema source of truth.
 
 ## Deployment Shape
 
-The planned production split is:
+The production split is:
 
 - Vercel for the Angular frontend/SSR surface.
 - Northflank for the Node.js API host.
@@ -123,10 +127,10 @@ When splitting frontend and backend, keep provider keys and Prisma credentials o
 
 This repo includes:
 
-- `vercel.json` with a placeholder `/api/*` rewrite.
+- `vercel.json` with a `/api/*` rewrite to the Northflank backend.
 - Dockerfile-based backend deployment for Northflank with `/api/health` checks.
 - Docker Compose for a local PostgreSQL-backed app stack.
 
-Replace the placeholder Northflank host in `vercel.json` before production traffic uses Vercel.
+Set `PUBLIC_SITE_URL` on Vercel to the production domain so SSR canonical and Open Graph URLs never fall back to an internal localhost render origin.
 
 See [docs/deployment.md](docs/deployment.md) and [docs/manual-setup.md](docs/manual-setup.md) for the current deployment checklist.

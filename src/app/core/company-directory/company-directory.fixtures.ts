@@ -16,7 +16,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     name: 'NovaLens',
     description:
       'AI research assistant for market teams tracking competitors and product movement.',
-    website: 'https://example.com/novalens',
+    website: createDemoWebsite('novalens'),
     categorySlug: 'ai-tools',
     tags: ['Market research', 'Competitive intelligence', 'B2B SaaS'],
     aiSummary:
@@ -28,7 +28,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'ledgerly',
     name: 'Ledgerly',
     description: 'Cash-flow planning and invoice intelligence for modern finance operators.',
-    website: 'https://example.com/ledgerly',
+    website: createDemoWebsite('ledgerly'),
     categorySlug: 'fintech',
     tags: ['Cash flow', 'Invoices', 'Finance ops'],
     aiSummary:
@@ -40,7 +40,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'signalharbor',
     name: 'SignalHarbor',
     description: 'Customer feedback analysis for support, success, and product teams.',
-    website: 'https://example.com/signalharbor',
+    website: createDemoWebsite('signalharbor'),
     categorySlug: 'ai-tools',
     tags: ['Feedback analysis', 'Customer success', 'Support'],
     aiSummary:
@@ -52,7 +52,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'goldline-studio',
     name: 'Goldline Studio',
     description: 'Brand and conversion agency for seed-stage software companies.',
-    website: 'https://example.com/goldline-studio',
+    website: createDemoWebsite('goldline-studio'),
     categorySlug: 'agencies',
     tags: ['Brand strategy', 'Web design', 'Conversion'],
     aiSummary:
@@ -64,7 +64,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'clearstack',
     name: 'ClearStack',
     description: 'Operations consultancy helping B2B teams simplify tooling and reporting.',
-    website: 'https://example.com/clearstack',
+    website: createDemoWebsite('clearstack'),
     categorySlug: 'agencies',
     tags: ['Operations', 'RevOps', 'Reporting'],
     aiSummary:
@@ -76,7 +76,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'metricforge',
     name: 'MetricForge',
     description: 'Self-serve analytics workspace for product-led growth teams.',
-    website: 'https://example.com/metricforge',
+    website: createDemoWebsite('metricforge'),
     categorySlug: 'analytics',
     tags: ['Product analytics', 'Dashboards', 'PLG'],
     aiSummary:
@@ -88,7 +88,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'carepilot',
     name: 'CarePilot',
     description: 'Patient engagement workspace for clinics coordinating follow-up care.',
-    website: 'https://example.com/carepilot',
+    website: createDemoWebsite('carepilot'),
     categorySlug: 'healthtech',
     tags: ['Patient engagement', 'Care coordination', 'Clinic ops'],
     aiSummary:
@@ -100,7 +100,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'helixbench',
     name: 'HelixBench',
     description: 'Biotech operations tracker for assay planning, sample runs, and lab handoffs.',
-    website: 'https://example.com/helixbench',
+    website: createDemoWebsite('helixbench'),
     categorySlug: 'biotech-pharma',
     tags: ['Lab operations', 'Assay planning', 'Sample tracking'],
     aiSummary:
@@ -112,7 +112,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'cartvale',
     name: 'CartVale',
     description: 'Merchandising and retention toolkit for niche commerce teams.',
-    website: 'https://example.com/cartvale',
+    website: createDemoWebsite('cartvale'),
     categorySlug: 'ecommerce',
     tags: ['Merchandising', 'Retention', 'Shop operations'],
     aiSummary:
@@ -124,7 +124,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'vaulttrace',
     name: 'VaultTrace',
     description: 'Security posture assistant for monitoring vendor access and policy gaps.',
-    website: 'https://example.com/vaulttrace',
+    website: createDemoWebsite('vaulttrace'),
     categorySlug: 'cybersecurity',
     tags: ['Vendor risk', 'Security posture', 'Policy review'],
     aiSummary:
@@ -136,7 +136,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'stackloom',
     name: 'StackLoom',
     description: 'Developer documentation and release-note automation for platform teams.',
-    website: 'https://example.com/stackloom',
+    website: createDemoWebsite('stackloom'),
     categorySlug: 'developer-tools',
     tags: ['Developer docs', 'Release notes', 'Platform engineering'],
     aiSummary:
@@ -148,7 +148,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'focusrail',
     name: 'FocusRail',
     description: 'Team productivity planner for prioritizing weekly work and decision logs.',
-    website: 'https://example.com/focusrail',
+    website: createDemoWebsite('focusrail'),
     categorySlug: 'productivity',
     tags: ['Planning', 'Decision logs', 'Team rituals'],
     aiSummary:
@@ -160,7 +160,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'campaignnorth',
     name: 'CampaignNorth',
     description: 'Marketing operations platform for campaign briefs, approvals, and launch notes.',
-    website: 'https://example.com/campaignnorth',
+    website: createDemoWebsite('campaignnorth'),
     categorySlug: 'marketing',
     tags: ['Campaign ops', 'Approvals', 'Launch planning'],
     aiSummary:
@@ -172,7 +172,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'courseharbor',
     name: 'CourseHarbor',
     description: 'Learning program manager for cohort-based courses and internal academies.',
-    website: 'https://example.com/courseharbor',
+    website: createDemoWebsite('courseharbor'),
     categorySlug: 'education',
     tags: ['Cohort learning', 'Curriculum ops', 'Learning analytics'],
     aiSummary:
@@ -184,7 +184,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'homepulse',
     name: 'HomePulse',
     description: 'Consumer service app for household maintenance reminders and vendor notes.',
-    website: 'https://example.com/homepulse',
+    website: createDemoWebsite('homepulse'),
     categorySlug: 'consumer',
     tags: ['Home services', 'Reminders', 'Vendor notes'],
     aiSummary:
@@ -196,7 +196,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'orbitdesk',
     name: 'OrbitDesk',
     description: 'Enterprise operations workspace for internal requests, approvals, and reporting.',
-    website: 'https://example.com/orbitdesk',
+    website: createDemoWebsite('orbitdesk'),
     categorySlug: 'enterprise-software',
     tags: ['Internal ops', 'Approvals', 'Enterprise workflow'],
     aiSummary:
@@ -208,7 +208,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'freightlane',
     name: 'FreightLane',
     description: 'Logistics coordination board for delivery exceptions and carrier updates.',
-    website: 'https://example.com/freightlane',
+    website: createDemoWebsite('freightlane'),
     categorySlug: 'logistics',
     tags: ['Carrier updates', 'Exceptions', 'Delivery ops'],
     aiSummary:
@@ -220,7 +220,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'plotwise',
     name: 'PlotWise',
     description: 'Real estate pipeline tracker for broker notes, properties, and deal stages.',
-    website: 'https://example.com/plotwise',
+    website: createDemoWebsite('plotwise'),
     categorySlug: 'real-estate',
     tags: ['Property pipeline', 'Broker notes', 'Deal tracking'],
     aiSummary:
@@ -232,7 +232,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'clausekit',
     name: 'ClauseKit',
     description: 'Legal operations assistant for contract intake, clause notes, and review queues.',
-    website: 'https://example.com/clausekit',
+    website: createDemoWebsite('clausekit'),
     categorySlug: 'legaltech',
     tags: ['Contract intake', 'Clause review', 'Legal ops'],
     aiSummary:
@@ -244,7 +244,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'talentmesa',
     name: 'TalentMesa',
     description: 'HR planning system for hiring requests, role scorecards, and onboarding tasks.',
-    website: 'https://example.com/talentmesa',
+    website: createDemoWebsite('talentmesa'),
     categorySlug: 'hrtech',
     tags: ['Hiring plans', 'Role scorecards', 'Onboarding'],
     aiSummary:
@@ -256,7 +256,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'storygrid',
     name: 'StoryGrid',
     description: 'Editorial planning hub for media teams managing stories, contributors, and channels.',
-    website: 'https://example.com/storygrid',
+    website: createDemoWebsite('storygrid'),
     categorySlug: 'media',
     tags: ['Editorial planning', 'Contributors', 'Publishing ops'],
     aiSummary:
@@ -268,7 +268,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'fieldnote-labs',
     name: 'Fieldnote Labs',
     description: 'Flexible operations studio for teams with unusual research and service workflows.',
-    website: 'https://example.com/fieldnote-labs',
+    website: createDemoWebsite('fieldnote-labs'),
     categorySlug: 'other',
     tags: ['Research ops', 'Service design', 'Workflow mapping'],
     aiSummary:
@@ -280,7 +280,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'treasurynorth',
     name: 'TreasuryNorth',
     description: 'Treasury planning dashboard for runway forecasts, approvals, and vendor spend.',
-    website: 'https://example.com/treasurynorth',
+    website: createDemoWebsite('treasurynorth'),
     categorySlug: 'fintech',
     tags: ['Treasury', 'Runway planning', 'Spend controls'],
     aiSummary:
@@ -292,7 +292,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'boardsignal',
     name: 'BoardSignal',
     description: 'Executive analytics pack builder for board updates and operating reviews.',
-    website: 'https://example.com/boardsignal',
+    website: createDemoWebsite('boardsignal'),
     categorySlug: 'analytics',
     tags: ['Board reporting', 'Executive metrics', 'Operating reviews'],
     aiSummary:
@@ -304,7 +304,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'clinicatlas',
     name: 'ClinicAtlas',
     description: 'Clinic growth and capacity planner for appointment demand and provider schedules.',
-    website: 'https://example.com/clinicatlas',
+    website: createDemoWebsite('clinicatlas'),
     categorySlug: 'healthtech',
     tags: ['Capacity planning', 'Provider schedules', 'Clinic growth'],
     aiSummary:
@@ -316,7 +316,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'trialnest',
     name: 'TrialNest',
     description: 'Clinical trial coordination workspace for site readiness and document handoffs.',
-    website: 'https://example.com/trialnest',
+    website: createDemoWebsite('trialnest'),
     categorySlug: 'biotech-pharma',
     tags: ['Clinical trials', 'Site readiness', 'Document handoffs'],
     aiSummary:
@@ -328,7 +328,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'shelfpilot',
     name: 'ShelfPilot',
     description: 'Catalog quality assistant for product pages, bundles, and merchandising checks.',
-    website: 'https://example.com/shelfpilot',
+    website: createDemoWebsite('shelfpilot'),
     categorySlug: 'ecommerce',
     tags: ['Catalog quality', 'Product pages', 'Merchandising'],
     aiSummary:
@@ -340,7 +340,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'shieldledger',
     name: 'ShieldLedger',
     description: 'Audit evidence tracker for security questionnaires and compliance reviews.',
-    website: 'https://example.com/shieldledger',
+    website: createDemoWebsite('shieldledger'),
     categorySlug: 'cybersecurity',
     tags: ['Audit evidence', 'Security reviews', 'Compliance'],
     aiSummary:
@@ -352,7 +352,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'deploymint',
     name: 'DeployMint',
     description: 'Release orchestration tool for changelogs, deploy notes, and rollback context.',
-    website: 'https://example.com/deploymint',
+    website: createDemoWebsite('deploymint'),
     categorySlug: 'developer-tools',
     tags: ['Release orchestration', 'Changelogs', 'Rollback planning'],
     aiSummary:
@@ -364,7 +364,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'workcanvas',
     name: 'WorkCanvas',
     description: 'Planning surface for cross-functional projects, owner maps, and meeting outcomes.',
-    website: 'https://example.com/workcanvas',
+    website: createDemoWebsite('workcanvas'),
     categorySlug: 'productivity',
     tags: ['Project planning', 'Owner maps', 'Meeting outcomes'],
     aiSummary:
@@ -376,7 +376,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'funnelnote',
     name: 'FunnelNote',
     description: 'Campaign learning repository for experiments, funnel notes, and channel insights.',
-    website: 'https://example.com/funnelnote',
+    website: createDemoWebsite('funnelnote'),
     categorySlug: 'marketing',
     tags: ['Experiment notes', 'Funnel insights', 'Channel learning'],
     aiSummary:
@@ -388,7 +388,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'skillfoundry',
     name: 'SkillFoundry',
     description: 'Workforce learning platform for skill maps, role paths, and practice reviews.',
-    website: 'https://example.com/skillfoundry',
+    website: createDemoWebsite('skillfoundry'),
     categorySlug: 'education',
     tags: ['Skill maps', 'Role paths', 'Practice reviews'],
     aiSummary:
@@ -400,7 +400,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'daywell',
     name: 'DayWell',
     description: 'Personal routines app for wellness plans, habit context, and coach notes.',
-    website: 'https://example.com/daywell',
+    website: createDemoWebsite('daywell'),
     categorySlug: 'consumer',
     tags: ['Wellness routines', 'Habit tracking', 'Coach notes'],
     aiSummary:
@@ -412,7 +412,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'processoak',
     name: 'ProcessOak',
     description: 'Enterprise process registry for policy owners, controls, and change requests.',
-    website: 'https://example.com/processoak',
+    website: createDemoWebsite('processoak'),
     categorySlug: 'enterprise-software',
     tags: ['Process registry', 'Policy owners', 'Change requests'],
     aiSummary:
@@ -424,7 +424,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'routebeacon',
     name: 'RouteBeacon',
     description: 'Delivery visibility layer for route delays, exception notes, and customer updates.',
-    website: 'https://example.com/routebeacon',
+    website: createDemoWebsite('routebeacon'),
     categorySlug: 'logistics',
     tags: ['Route visibility', 'Delay notes', 'Customer updates'],
     aiSummary:
@@ -436,7 +436,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'leaselens',
     name: 'LeaseLens',
     description: 'Lease analysis workspace for rent rolls, renewal dates, and portfolio notes.',
-    website: 'https://example.com/leaselens',
+    website: createDemoWebsite('leaselens'),
     categorySlug: 'real-estate',
     tags: ['Lease analysis', 'Rent rolls', 'Portfolio notes'],
     aiSummary:
@@ -448,7 +448,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'docketflow',
     name: 'DocketFlow',
     description: 'Matter management board for legal deadlines, stakeholders, and review status.',
-    website: 'https://example.com/docketflow',
+    website: createDemoWebsite('docketflow'),
     categorySlug: 'legaltech',
     tags: ['Matter management', 'Legal deadlines', 'Review status'],
     aiSummary:
@@ -460,7 +460,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'peoplesignal',
     name: 'PeopleSignal',
     description: 'Employee feedback and workforce planning hub for people operations teams.',
-    website: 'https://example.com/peoplesignal',
+    website: createDemoWebsite('peoplesignal'),
     categorySlug: 'hrtech',
     tags: ['Employee feedback', 'Workforce planning', 'People ops'],
     aiSummary:
@@ -472,7 +472,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'channelforge',
     name: 'ChannelForge',
     description: 'Media distribution planner for episode launches, sponsorship notes, and channels.',
-    website: 'https://example.com/channelforge',
+    website: createDemoWebsite('channelforge'),
     categorySlug: 'media',
     tags: ['Distribution planning', 'Sponsorship notes', 'Channel ops'],
     aiSummary:
@@ -484,7 +484,7 @@ const BASE_COMPANY_FIXTURES: CompanyFixture[] = [
     slug: 'northstar-fieldworks',
     name: 'Northstar Fieldworks',
     description: 'Field operations consultancy for research visits, service audits, and playbooks.',
-    website: 'https://example.com/northstar-fieldworks',
+    website: createDemoWebsite('northstar-fieldworks'),
     categorySlug: 'other',
     tags: ['Field operations', 'Service audits', 'Playbooks'],
     aiSummary:
@@ -950,10 +950,58 @@ const ADDITIONAL_COMPANY_FIXTURE_DRAFTS: CompanyFixtureDraft[] = [
 const ADDITIONAL_COMPANY_FIXTURES: CompanyFixture[] =
   ADDITIONAL_COMPANY_FIXTURE_DRAFTS.map((company) => ({
     ...company,
-    website: `https://example.com/${company.slug}`,
+    website: createDemoWebsite(company.slug),
   }));
+
+const LAUNCH_CATEGORY_PROFILE_LIMITS: Record<string, number> = {
+  'agencies': 3,
+  'ai-tools': 3,
+  'analytics': 2,
+  'biotech-pharma': 3,
+  'consumer': 1,
+  'cybersecurity': 2,
+  'developer-tools': 3,
+  'ecommerce': 2,
+  'education': 2,
+  'enterprise-software': 2,
+  'fintech': 2,
+  'healthtech': 2,
+  'hrtech': 2,
+  'legaltech': 1,
+  'logistics': 1,
+  'marketing': 2,
+  'media': 1,
+  'other': 2,
+  'productivity': 2,
+  'real-estate': 2,
+};
 
 export const COMPANY_FIXTURES: CompanyFixture[] = [
   ...BASE_COMPANY_FIXTURES,
   ...ADDITIONAL_COMPANY_FIXTURES,
-];
+]
+  .filter(createCategoryLimitFilter())
+  .map((company) => ({
+    ...company,
+    website: createDemoWebsite(company.slug),
+  }));
+
+function createDemoWebsite(slug: string): string {
+  return `https://www.${slug.replace(/-/g, '')}.co`;
+}
+
+function createCategoryLimitFilter(): (company: CompanyFixture) => boolean {
+  const includedByCategory = new Map<string, number>();
+
+  return (company) => {
+    const categoryCount = includedByCategory.get(company.categorySlug) ?? 0;
+    const categoryLimit = LAUNCH_CATEGORY_PROFILE_LIMITS[company.categorySlug] ?? 1;
+    const shouldInclude = categoryCount < categoryLimit;
+
+    if (shouldInclude) {
+      includedByCategory.set(company.categorySlug, categoryCount + 1);
+    }
+
+    return shouldInclude;
+  };
+}

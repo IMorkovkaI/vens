@@ -63,8 +63,63 @@ export class SeoService {
   }
 
   private toAbsoluteUrl(path: string): string {
-    const origin = this.document.location?.origin ?? 'http://localhost';
+    const origin = this.getPublicOrigin();
 
     return new URL(path, origin).toString();
+  }
+
+  private getPublicOrigin(): string {
+    const configuredOrigin = this.getConfiguredPublicOrigin();
+
+    if (configuredOrigin) {
+      return configuredOrigin;
+    }
+
+    const origin = this.document.location?.origin;
+
+    if (origin && !this.isLocalhostOrigin(origin)) {
+      return origin;
+    }
+
+    return 'https://vensight-phi.vercel.app';
+  }
+
+  private getConfiguredPublicOrigin(): string {
+    const env = (globalThis as {
+      process?: { env?: Record<string, string | undefined> };
+    }).process?.env;
+    const configuredUrl =
+      env?.['PUBLIC_SITE_URL']?.trim() ||
+      env?.['VERCEL_PROJECT_PRODUCTION_URL']?.trim() ||
+      env?.['VERCEL_URL']?.trim();
+
+    if (!configuredUrl) {
+      return '';
+    }
+
+    const withProtocol = /^https?:\/\//i.test(configuredUrl)
+      ? configuredUrl
+      : `https://${configuredUrl}`;
+
+    try {
+      const url = new URL(withProtocol);
+      url.hash = '';
+      url.search = '';
+      url.pathname = '';
+
+      return url.toString().replace(/\/$/, '');
+    } catch {
+      return '';
+    }
+  }
+
+  private isLocalhostOrigin(origin: string): boolean {
+    try {
+      const hostname = new URL(origin).hostname.toLowerCase();
+
+      return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+    } catch {
+      return true;
+    }
   }
 }

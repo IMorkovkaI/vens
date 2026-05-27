@@ -144,7 +144,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
           <div class="flex items-center justify-between gap-4">
             <div>
               <p class="text-sm font-semibold text-slate-950">AI analysis preview</p>
-              <p class="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Cached mock workflow</p>
+              <p class="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Provider-backed workflow</p>
             </div>
             <span class="pill-outline">96/100</span>
           </div>
@@ -185,7 +185,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
             </div>
             <div class="data-row">
               <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Mode</dt>
-              <dd class="mt-1 text-sm font-semibold text-slate-900">Mock AI</dd>
+              <dd class="mt-1 text-sm font-semibold text-slate-900">AI review</dd>
             </div>
           </dl>
         </div>

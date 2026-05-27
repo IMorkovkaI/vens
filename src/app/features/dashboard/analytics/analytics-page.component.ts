@@ -15,7 +15,7 @@ import { DirectoryAnalytics } from '../../../core/analytics/dashboard-analytics.
         <p class="mt-6 eyebrow">Analytics</p>
         <h1 class="mt-3 text-4xl font-semibold text-slate-950">Directory performance</h1>
         <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-          Lightweight metrics from the current mock directory data. Advanced analytics stay out of this MVP slice.
+          Lightweight metrics from the current directory data. Advanced analytics can layer on as traffic grows.
         </p>
       </div>
     </section>

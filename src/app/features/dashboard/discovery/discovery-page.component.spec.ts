@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
-import { vi } from 'vitest';
 import { AuthService } from '../../../core/auth/auth.service';
 import { DiscoverySearchResponse } from '../../../core/discovery/discovery.models';
 import { DiscoveryService } from '../../../core/discovery/discovery.service';
@@ -63,7 +62,7 @@ describe('DiscoveryPageComponent', () => {
 
   it('routes selected results into AI analysis', async () => {
     const router = TestBed.inject(Router);
-    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const navigateSpy = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
     const fixture = TestBed.createComponent(DiscoveryPageComponent);
 
     fixture.detectChanges();

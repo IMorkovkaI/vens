@@ -20,14 +20,14 @@ describe('CompanyDirectoryService', () => {
     service = TestBed.inject(CompanyDirectoryService);
   });
 
-  it('should list mock companies', async () => {
+  it('should list launch companies', async () => {
     const companies = await firstValueFrom(service.getCompanies());
     const resultCount = companies.length;
 
     expect(resultCount).toBeGreaterThan(0);
   });
 
-  it('should include at least four mock companies for every category', async () => {
+  it('should include at least one company for every category', async () => {
     const [categories, companies] = await Promise.all([
       firstValueFrom(service.getCategories()),
       firstValueFrom(service.getCompanies()),
@@ -43,8 +43,14 @@ describe('CompanyDirectoryService', () => {
     }
 
     expect(
-      categories.every((category) => (companyCountsByCategory.get(category.slug) ?? 0) >= 4),
+      categories.every((category) => (companyCountsByCategory.get(category.slug) ?? 0) >= 1),
     ).toBe(true);
+  });
+
+  it('should not show example.com websites in launch fixtures', async () => {
+    const companies = await firstValueFrom(service.getCompanies());
+
+    expect(companies.every((company) => !company.website.includes('example.com'))).toBe(true);
   });
 
   it('should filter companies by category and search text', async () => {
@@ -101,7 +107,7 @@ describe('CompanyDirectoryService', () => {
         categorySlug: 'analytics',
         tags: ['Testing', 'Dashboard'],
         aiSummary: 'Test Listing is used for management flow validation.',
-        seoDescription: 'Review Test Listing in the Vensight mock directory.',
+        seoDescription: 'Review Test Listing in the Vensight directory.',
       }),
     );
     const lookup = await firstValueFrom(service.getCompanyBySlug(company.slug));
@@ -115,7 +121,7 @@ describe('CompanyDirectoryService', () => {
       service.updateCompany('novalens', {
         name: 'NovaLens Updated',
         description: 'Updated AI research assistant profile.',
-        website: 'https://example.com/novalens',
+        website: 'https://www.novalens.co',
         categorySlug: 'ai-tools',
         tags: ['Market research'],
         aiSummary: 'Updated AI summary.',

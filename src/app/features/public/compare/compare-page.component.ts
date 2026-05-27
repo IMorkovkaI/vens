@@ -18,7 +18,7 @@ import { SeoService } from '../../../core/seo/seo.service';
           <div>
             <h1 class="text-4xl font-semibold text-slate-950">Compare companies</h1>
             <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-              Pick two directory profiles and generate a mock AI comparison of positioning, overlap, and fit.
+              Pick two directory profiles and generate an AI-assisted comparison of positioning, overlap, and fit.
             </p>
           </div>
           <a routerLink="/companies" class="return-link focus-ring">
@@ -80,14 +80,14 @@ import { SeoService } from '../../../core/seo/seo.service';
             <div class="mt-6 empty-state p-10">
               <h2 class="text-xl font-semibold text-slate-950">Comparison preview</h2>
               <p class="mt-2 text-sm leading-6 text-slate-600">
-                Select two companies to generate a mock AI comparison.
+                Select two companies to generate an AI-assisted comparison.
               </p>
             </div>
           } @else {
             <article class="mt-6 surface-card">
               <div class="border-b border-slate-200 p-6">
                 <p class="eyebrow">
-                  {{ comparison()?.provider }} comparison - {{ confidenceLabel() }} confidence
+                  {{ providerLabel() }} - {{ confidenceLabel() }} confidence
                 </p>
                 <h2 class="mt-2 text-3xl font-semibold text-slate-950">
                   {{ comparison()?.leftCompany?.name }} vs {{ comparison()?.rightCompany?.name }}
@@ -135,7 +135,7 @@ import { SeoService } from '../../../core/seo/seo.service';
                     <div>
                       <dt class="font-semibold text-slate-900">Model</dt>
                       <dd class="mt-1 text-slate-600">
-                        {{ comparison()?.model }}
+                        {{ modelLabel() }}
                       </dd>
                     </div>
                   </dl>
@@ -168,7 +168,7 @@ export class ComparePageComponent implements OnInit {
     this.seo.apply({
       title: 'Compare companies | Vensight',
       description:
-        'Compare two companies in the Vensight directory with mock AI positioning, category overlap, and differentiator analysis.',
+        'Compare two companies in the Vensight directory with AI-assisted positioning, category overlap, and differentiator analysis.',
       canonicalPath: '/compare',
       imagePath: '/image2.webp',
     });
@@ -229,5 +229,17 @@ export class ComparePageComponent implements OnInit {
     const tags = this.comparison()?.overlappingTags ?? [];
 
     return tags.length ? tags.join(', ') : 'No direct tag overlap';
+  }
+
+  protected providerLabel(): string {
+    return this.comparison()?.provider === 'mock'
+      ? 'AI-assisted comparison'
+      : `${this.comparison()?.provider} comparison`;
+  }
+
+  protected modelLabel(): string {
+    return this.comparison()?.provider === 'mock'
+      ? 'Vensight comparison engine'
+      : this.comparison()?.model ?? 'Pending';
   }
 }

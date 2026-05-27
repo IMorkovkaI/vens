@@ -23,7 +23,7 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
           {{ mode() === 'create' ? 'Add company' : 'Edit company' }}
         </h1>
         <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-          Manage the mock directory record. Backend persistence will replace this in-memory flow later.
+          Manage the directory record with protected backend persistence.
         </p>
       </div>
     </section>
@@ -41,7 +41,7 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
       } @else if (notFound()) {
         <div class="empty-state p-8">
           <h2 class="text-lg font-semibold text-slate-950">Company not found</h2>
-          <p class="mt-2 text-sm text-slate-600">This listing is not available in the mock directory.</p>
+          <p class="mt-2 text-sm text-slate-600">This listing is not available in the directory.</p>
         </div>
       } @else {
         <form class="grid gap-5 surface-card p-6" (ngSubmit)="submit()">

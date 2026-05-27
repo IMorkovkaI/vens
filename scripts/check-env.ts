@@ -36,6 +36,12 @@ for (const envName of SECRET_ENV_NAMES) {
 console.log(`- TRUST_PROXY: ${process.env['TRUST_PROXY']?.trim() || 'default'}`);
 
 console.log('');
+console.log('Public URLs');
+console.log(`- PUBLIC_SITE_URL: ${process.env['PUBLIC_SITE_URL']?.trim() || 'missing'}`);
+console.log(`- VERCEL_PROJECT_PRODUCTION_URL: ${process.env['VERCEL_PROJECT_PRODUCTION_URL']?.trim() || 'missing'}`);
+console.log(`- VERCEL_URL: ${process.env['VERCEL_URL']?.trim() || 'missing'}`);
+
+console.log('');
 console.log('AI');
 console.log(`- selected provider: ${status.ai.selectedProvider}`);
 

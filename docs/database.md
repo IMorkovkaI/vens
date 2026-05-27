@@ -112,7 +112,7 @@ npm run prisma:seed
 
 ## Current Integration
 
-Directory reads, writes, category listings, directory analytics, auth login, registration, developer management, auth session validation, and mock AI analysis cache lookups now resolve through repository boundaries:
+Directory reads, writes, category listings, directory analytics, auth login, registration, developer management, auth session validation, and AI analysis cache lookups now resolve through repository boundaries:
 
 - `DATABASE_URL` absent: use in-memory mock repositories.
 - `DATABASE_URL` present: use Prisma/PostgreSQL as the authoritative backend for implemented repositories.
@@ -129,7 +129,7 @@ The next database slices should:
 
 ## Repository Foundation
 
-The Prisma-backed directory repository lives in `src/api/database/prisma-directory.repository.ts`. It mirrors the current mock directory store contract for categories, companies, search/filter, create/edit listing, and analytics.
+The Prisma-backed directory repository lives in `src/api/database/prisma-directory.repository.ts`. It mirrors the development directory store contract for categories, companies, search/filter, create/edit listing, and analytics.
 
 The Prisma-backed AI analysis cache repository lives in `src/api/database/prisma-ai-analysis-cache.repository.ts`. It persists content-aware AI analysis results by normalized HTTPS URL and remains backward-compatible with older cache entries that only stored generated form data.
 

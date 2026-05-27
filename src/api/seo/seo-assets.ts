@@ -1,8 +1,9 @@
 import { Category, Company } from '../../app/core/company-directory/company-directory.models';
 
 export function getPublicBaseUrl(requestBaseUrl: string): string {
-  const configuredUrl = process.env['PUBLIC_SITE_URL']?.trim();
-  const candidate = configuredUrl || requestBaseUrl;
+  const configuredUrl = getConfiguredPublicSiteUrl();
+  const candidate =
+    configuredUrl || (isLocalhostUrl(requestBaseUrl) ? getProductionFallbackUrl() : requestBaseUrl);
 
   try {
     const url = new URL(candidate);
@@ -12,7 +13,39 @@ export function getPublicBaseUrl(requestBaseUrl: string): string {
 
     return url.toString().replace(/\/$/, '');
   } catch {
-    return 'http://localhost:4000';
+    return getProductionFallbackUrl();
+  }
+}
+
+export function getConfiguredPublicSiteUrl(): string {
+  const explicitUrl = process.env['PUBLIC_SITE_URL']?.trim();
+
+  if (explicitUrl) {
+    return explicitUrl;
+  }
+
+  const vercelUrl =
+    process.env['VERCEL_PROJECT_PRODUCTION_URL']?.trim() ||
+    process.env['VERCEL_URL']?.trim();
+
+  if (!vercelUrl) {
+    return '';
+  }
+
+  return /^https?:\/\//i.test(vercelUrl) ? vercelUrl : `https://${vercelUrl}`;
+}
+
+function getProductionFallbackUrl(): string {
+  return 'https://vensight-phi.vercel.app';
+}
+
+function isLocalhostUrl(value: string): boolean {
+  try {
+    const hostname = new URL(value).hostname.toLowerCase();
+
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+  } catch {
+    return true;
   }
 }
 

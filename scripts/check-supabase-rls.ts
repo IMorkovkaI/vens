@@ -5,6 +5,7 @@ const PROJECT_TABLES = [
   'Category',
   'Company',
   'User',
+  'DailyUsage',
   'Session',
   'AiAnalysisResult',
   'DiscoveryCandidate',
