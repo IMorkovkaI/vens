@@ -6,6 +6,7 @@
 /out-tsc
 /bazel-out
 /generated/prisma
+/docs
 
 # Dependencies
 /node_modules
