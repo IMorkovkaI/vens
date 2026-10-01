@@ -1,61 +1,137 @@
-<div class="app-shell flex flex-col">
-  <a class="skip-link focus-ring" href="#main-content">Skip to content</a>
-  <header class="app-header sticky top-0 z-20">
-    <nav class="main-nav mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 lg:px-8" aria-label="Main navigation">
-      <a routerLink="/" class="brand-link focus-ring flex items-center gap-3 rounded-sm text-xl font-black text-slate-950">
-        <span class="brand-mark" aria-hidden="true">V</span>
-        <span class="brand-name tracking-normal">Vensight</span>
-      </a>
-
-      <div class="main-nav-links flex items-center gap-1.5">
-        <a
-          routerLink="/"
-          routerLinkActive="nav-link-active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="nav-link focus-ring"
-        >
-          Home
-        </a>
-        <a
-          routerLink="/companies"
-          routerLinkActive="nav-link-active"
-          class="nav-link focus-ring"
-        >
-          Companies
-        </a>
-        <a
-          routerLink="/compare"
-          routerLinkActive="nav-link-active"
-          class="nav-link focus-ring"
-        >
-          Compare
-        </a>
+<div class="app-shell" [class.workspace-shell]="isWorkspace()">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  @if (isWorkspace()) {
+    <aside
+      class="workspace-sidebar"
+      [class.is-open]="menuOpen()"
+      (keydown.escape)="closeMenu(workspaceMenu)"
+    >
+      <a routerLink="/" class="brand-link"
+        ><img src="/brand/vensight-mark-blue.png" width="41" height="41" alt="" /><span
+          >Vensight</span
+        ></a
+      >
+      <p class="sidebar-label">Workspace</p>
+      <nav id="workspace-navigation" aria-label="Workspace navigation">
         <a
           routerLink="/dashboard"
-          routerLinkActive="nav-link-active"
-          class="nav-link focus-ring"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          >Overview</a
         >
-          Dashboard
-        </a>
+        <a routerLink="/dashboard/discovery" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Company discovery</a
+        >
+        <a
+          routerLink="/dashboard/ai-analysis"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          >AI analysis</a
+        >
+        <a routerLink="/dashboard/analytics" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Analytics</a
+        >
+        @if (auth.canManageListings()) {
+          <a
+            routerLink="/dashboard/companies/new"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            >Add company</a
+          >
+        }
+        @if (auth.canManageDevelopers()) {
+          <a
+            routerLink="/dashboard/developers"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            >Developers</a
+          >
+        }
+      </nav>
+      <div class="sidebar-account">
+        <span class="pill role-pill">{{ auth.currentUser()?.role }}</span>
+        <p>{{ auth.currentUser()?.email }}</p>
+        <button type="button" class="btn-subtle" (click)="logout()">Sign out</button>
       </div>
-    </nav>
-  </header>
-
-  <main id="main-content" class="flex-1">
-    <router-outlet />
-  </main>
-
+    </aside>
+    <header class="workspace-toolbar" (keydown.escape)="closeMenu(workspaceMenu)">
+      <button
+        #workspaceMenu
+        type="button"
+        class="menu-toggle workspace-menu"
+        aria-label="Toggle workspace navigation"
+        aria-controls="workspace-navigation"
+        [attr.aria-expanded]="menuOpen()"
+        (click)="menuOpen.set(!menuOpen())"
+      >
+        <img src="/icons/uko/menu.svg" width="30" height="30" alt="" />
+      </button>
+      <a routerLink="/dashboard" class="workspace-title">Directory workspace</a>
+      <a routerLink="/companies" class="text-link"
+        >Browse directory <span aria-hidden="true">&#8599;</span></a
+      >
+    </header>
+  } @else {
+    <header class="app-header" (keydown.escape)="closeMenu(publicMenu)">
+      <div class="site-container header-inner">
+        <a routerLink="/" class="brand-link"
+          ><img src="/brand/vensight-mark-blue.png" width="41" height="41" alt="" /><span
+            >Vensight</span
+          ></a
+        >
+        <button
+          #publicMenu
+          type="button"
+          class="menu-toggle"
+          aria-label="Toggle navigation"
+          aria-controls="public-navigation"
+          [attr.aria-expanded]="menuOpen()"
+          (click)="menuOpen.set(!menuOpen())"
+        >
+          <img src="/icons/uko/menu.svg" width="30" height="30" alt="" />
+        </button>
+        <nav id="public-navigation" [class.is-open]="menuOpen()" aria-label="Main navigation">
+          <div class="nav-links">
+            <a
+              routerLink="/"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              ariaCurrentWhenActive="page"
+              >Home</a
+            >
+            <a routerLink="/companies" routerLinkActive="active" ariaCurrentWhenActive="page"
+              >Companies</a
+            >
+            <a routerLink="/compare" routerLinkActive="active" ariaCurrentWhenActive="page"
+              >Compare</a
+            >
+          </div>
+          <div class="account-links">
+            @if (auth.isAuthenticated()) {
+              <a routerLink="/dashboard">Dashboard</a>
+              <a class="btn-primary" routerLink="/dashboard/discovery">Discover companies</a>
+            } @else {
+              <a routerLink="/dashboard/login">Sign in</a>
+              <a class="btn-primary" routerLink="/dashboard/register">Create account</a>
+            }
+          </div>
+        </nav>
+      </div>
+    </header>
+  }
+  <main id="main-content" tabindex="-1"><router-outlet /></main>
   <footer class="app-footer">
-    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm sm:flex-row sm:items-center sm:justify-between lg:px-8">
-      <p class="flex items-center gap-3 font-semibold">
-        <span class="brand-mark" aria-hidden="true">V</span>
-        Vensight
-      </p>
-      <div class="flex flex-wrap items-center gap-4">
-        <a routerLink="/data-sources" class="text-link footer-link focus-ring">Data sources</a>
-        <a routerLink="/legal/privacy" class="text-link footer-link focus-ring">Privacy</a>
-        <a routerLink="/legal/terms" class="text-link footer-link focus-ring">Terms</a>
+    <div class="site-container footer-inner">
+      <div>
+        <a routerLink="/" class="footer-brand">Vensight</a>
+        <p>Seeded demo profiles. Company details and AI summaries are illustrative.</p>
       </div>
+      <nav aria-label="Footer navigation">
+        <a routerLink="/data-sources">Data sources</a>
+        <a routerLink="/legal/privacy">Privacy</a>
+        <a routerLink="/legal/terms">Terms</a>
+      </nav>
     </div>
   </footer>
 </div>

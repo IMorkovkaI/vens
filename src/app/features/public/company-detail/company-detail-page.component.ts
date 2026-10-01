@@ -16,9 +16,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
       </section>
     } @else if (hasError()) {
       <section class="mx-auto max-w-3xl px-6 py-16 text-center lg:px-8">
-        <div class="status-error p-8" role="alert">
-          This company profile could not be loaded.
-        </div>
+        <div class="status-error p-8" role="alert">This company profile could not be loaded.</div>
       </section>
     } @else if (!company()) {
       <section class="mx-auto max-w-3xl px-6 py-16 text-center lg:px-8">
@@ -27,19 +25,15 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
         <p class="mt-3 text-sm leading-6 text-slate-600">
           The directory may not have this profile yet, or the link may have changed.
         </p>
-        <a routerLink="/companies" class="mt-6 btn-primary focus-ring">
-          Browse companies
-        </a>
+        <a routerLink="/companies" class="mt-6 btn-primary focus-ring"> Browse companies </a>
       </section>
     } @else {
-      <section class="page-hero page-hero-media hero-bg-companies">
+      <section class="page-hero">
         <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-          <a routerLink="/companies" class="return-link focus-ring">
-            Back to companies
-          </a>
-          <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_340px] lg:items-start">
+          <a routerLink="/companies" class="return-link focus-ring"> Back to companies </a>
+          <div class="mt-6 profile-hero-grid">
             <div class="grid gap-6 sm:grid-cols-[auto_1fr]">
-              <div class="profile-avatar" aria-hidden="true">
+              <div class="company-monogram" aria-hidden="true">
                 {{ companyInitials() }}
               </div>
               <div>
@@ -59,54 +53,42 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
                   }
                 </div>
                 <div class="mt-6 flex flex-wrap gap-3">
-                  <a [href]="company()?.website" target="_blank" rel="noopener" class="btn-primary focus-ring">
+                  <a
+                    [href]="company()?.website"
+                    target="_blank"
+                    rel="noopener"
+                    class="btn-primary focus-ring"
+                  >
                     Visit website
                   </a>
-                  <a routerLink="/compare" class="btn-secondary focus-ring">
-                    Compare company
-                  </a>
+                  <a routerLink="/compare" class="btn-secondary focus-ring"> Compare company </a>
                 </div>
               </div>
             </div>
-            <aside class="score-card">
-              <p class="text-sm font-semibold text-slate-950">Vensight Score</p>
-              <p class="mt-3 text-5xl font-semibold text-slate-950">
-                {{ companyScore() }}<span class="text-base font-semibold text-slate-500">/100</span>
-              </p>
-              <div class="mt-5 space-y-3">
-                <div class="score-line">
-                  <span class="text-slate-600">Summary quality</span>
-                  <span class="font-semibold text-slate-950">{{ scoreBreakdown().summary }}</span>
-                </div>
-                <div class="score-line">
-                  <span class="text-slate-600">Category fit</span>
-                  <span class="font-semibold text-slate-950">{{ scoreBreakdown().category }}</span>
-                </div>
-                <div class="score-line">
-                  <span class="text-slate-600">SEO readiness</span>
-                  <span class="font-semibold text-slate-950">{{ scoreBreakdown().seo }}</span>
-                </div>
-              </div>
-            </aside>
           </div>
-          <div class="detail-tabs mt-8">
-            <span>Overview</span>
-            <span>AI Summary</span>
-            <span>Similar Companies</span>
-            <span>SEO Meta</span>
-          </div>
+          <nav class="profile-tabs mt-6" aria-label="Company sections">
+            <a [routerLink]="[]" fragment="overview">Overview</a>
+            <a [routerLink]="[]" fragment="summary">Company summary</a>
+            <a [routerLink]="[]" fragment="similar">Similar companies</a>
+            <a [routerLink]="[]" fragment="description">Search description</a>
+          </nav>
         </div>
       </section>
 
       <section class="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[1fr_360px] lg:px-8">
         <div class="space-y-6">
-          <article class="surface-card p-6">
+          <article id="overview" class="content-section">
             <h2 class="text-xl font-semibold text-slate-950">Company overview</h2>
             <dl class="mt-5 grid gap-4 text-sm sm:grid-cols-2">
               <div class="data-row">
                 <dt class="font-semibold text-slate-500">Website</dt>
                 <dd class="mt-1">
-                  <a [href]="company()?.website" target="_blank" rel="noopener" class="font-semibold text-link focus-ring">
+                  <a
+                    [href]="company()?.website"
+                    target="_blank"
+                    rel="noopener"
+                    class="font-semibold text-link focus-ring"
+                  >
                     {{ domainLabel() }}
                   </a>
                 </dd>
@@ -117,24 +99,26 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
               </div>
               <div class="data-row">
                 <dt class="font-semibold text-slate-500">Tags</dt>
-                <dd class="mt-1 font-semibold text-slate-950">{{ company()?.tags?.length ?? 0 }}</dd>
+                <dd class="mt-1 font-semibold text-slate-950">
+                  {{ company()?.tags?.length ?? 0 }}
+                </dd>
               </div>
               <div class="data-row">
-                <dt class="font-semibold text-slate-500">AI provider</dt>
-                <dd class="mt-1 font-semibold text-slate-950">Mock cached</dd>
+                <dt class="font-semibold text-slate-500">Profile content</dt>
+                <dd class="mt-1 font-semibold text-slate-950">Company summary</dd>
               </div>
             </dl>
           </article>
 
-          <article class="surface-card p-6">
-            <h2 class="text-xl font-semibold text-slate-950">AI-generated summary</h2>
+          <article id="summary" class="content-section">
+            <h2 class="text-xl font-semibold text-slate-950">Company summary</h2>
             <p class="insight-quote mt-4 text-base leading-8">
               {{ company()?.aiSummary }}
             </p>
           </article>
 
-          <article class="surface-card p-6">
-            <h2 class="text-xl font-semibold text-slate-950">SEO description</h2>
+          <article id="description" class="content-section">
+            <h2 class="text-xl font-semibold text-slate-950">Search description</h2>
             <p class="mt-4 text-base leading-8 text-slate-700">
               {{ company()?.seoDescription }}
             </p>
@@ -142,8 +126,8 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
         </div>
 
         <aside class="space-y-6">
-          <div class="surface-card insight-panel p-5">
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Tags</h2>
+          <div class="content-section">
+            <h2 class="text-sm font-semibold  text-slate-500">Tags</h2>
             <div class="mt-4 flex flex-wrap gap-2">
               @for (tag of company()?.tags ?? []; track tag) {
                 <span class="pill">
@@ -155,7 +139,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
         </aside>
       </section>
 
-      <section class="section-band">
+      <section id="similar" class="section-band">
         <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
           <h2 class="text-2xl font-semibold text-slate-950">Similar companies</h2>
           @if (!similarCompanies().length) {
@@ -234,23 +218,6 @@ export class CompanyDetailPageComponent implements OnInit, OnDestroy {
         .slice(0, 2)
         .toUpperCase() || 'V'
     );
-  }
-
-  protected companyScore(): number {
-    const slug = this.company()?.slug ?? '';
-    const baseScore = 88 + (slug.length % 8);
-
-    return Math.min(baseScore, 96);
-  }
-
-  protected scoreBreakdown(): { category: number; seo: number; summary: number } {
-    const score = this.companyScore();
-
-    return {
-      summary: Math.min(score + 1, 98),
-      category: Math.max(score - 2, 80),
-      seo: Math.min(score + 2, 98),
-    };
   }
 
   protected domainLabel(): string {

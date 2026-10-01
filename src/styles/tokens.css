@@ -1,59 +1,12 @@
-/* Hallmark - macrostructure: Market Index - tone: premium business directory - anchor hue: brass-gold */
+/* Extracted from UKO 211:1582. Typography and accessibility adaptations: DESIGN.md. */
 :root {
-  --color-paper: oklch(97.5% 0.006 92);
-  --color-paper-2: oklch(94.5% 0.01 92);
-  --color-paper-3: oklch(88.5% 0.014 92);
-  --color-panel: oklch(99% 0.004 92);
-  --color-ink: oklch(17% 0.034 252);
-  --color-ink-soft: oklch(34% 0.036 252);
-  --color-ink-faint: oklch(52% 0.03 252);
-  --color-charcoal: oklch(20% 0.037 252);
-  --color-navy: oklch(24% 0.062 252);
-  --color-rule: oklch(80% 0.017 92);
-  --color-rule-strong: oklch(55% 0.036 252);
-  --color-accent: oklch(66% 0.132 82);
-  --color-accent-2: oklch(57% 0.12 68);
-  --color-accent-ink: oklch(34% 0.079 68);
-  --color-accent-soft: oklch(92% 0.05 82);
-  --color-steel: oklch(58% 0.058 232);
-  --color-success: oklch(42% 0.11 155);
-  --color-warning: oklch(55% 0.13 74);
-  --color-danger: oklch(43% 0.15 25);
-
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-body: "DM Sans", "Aptos", "Segoe UI", sans-serif;
-  --font-mono: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
-
-  --space-2xs: 0.25rem;
-  --space-xs: 0.5rem;
-  --space-sm: 0.75rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-2xl: 3rem;
-  --space-3xl: 4rem;
-
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.35rem;
-  --text-2xl: 1.75rem;
-  --text-3xl: 2.25rem;
-  --text-display-s: 3.45rem;
-  --text-display: 5.2rem;
-
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-pill: 999px;
-
-  --rule-thin: 1px;
-  --rule-strong: 2px;
-  --dur-fast: 150ms;
-  --dur-med: 260ms;
-  --dur-slow: 520ms;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --uko-primary: #2940d3;
+  --uko-page: #f0f0f0;
+  --uko-surface: #ffffff;
+  --uko-text: #3a3c40;
+  --uko-muted: #82868c;
+  --uko-rule: #e3e6eb;
+  --uko-success: #2cc5bd;
+  --uko-warning: #ffd54f;
+  --uko-shadow: 0 7px 20px rgba(40, 41, 61, 0.08);
 }

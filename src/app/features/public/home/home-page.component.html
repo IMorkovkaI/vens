@@ -1,0 +1,125 @@
+<div class="home-directory site-container">
+  <section class="directory-intro" aria-labelledby="directory-title">
+    <p class="eyebrow">Company intelligence</p>
+    <h1 id="directory-title">Vensight company directory</h1>
+    <p class="directory-intro-copy">Find companies, tools, and agencies by category.</p>
+    <form class="search" (ngSubmit)="search()" role="search">
+      <div class="search-input">
+        <img src="/icons/uko/search.svg" width="40" height="40" alt="" />
+        <label class="visually-hidden" for="directory-search"
+          >Search companies, categories, or tags</label
+        >
+        <input
+          id="directory-search"
+          name="query"
+          type="search"
+          autocomplete="off"
+          placeholder="Search companies, categories, or tags"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+        />
+      </div>
+      <button class="btn-primary" type="submit">Search directory</button>
+    </form>
+    <div class="directory-summary" aria-live="polite">
+      @if (state() === 'ready') {
+        <span
+          ><strong>{{ companies().length }}</strong>
+          {{ companies().length === 1 ? 'company' : 'companies' }}</span
+        >
+        <span
+          ><strong>{{ categories().length }}</strong>
+          {{ categories().length === 1 ? 'category' : 'categories' }}</span
+        >
+      } @else if (state() === 'loading') {
+        <span>Loading directory...</span>
+      } @else {
+        <span>Directory unavailable</span>
+      }
+    </div>
+  </section>
+
+  @if (state() === 'error') {
+    <div class="load-message" role="alert">
+      <h2>The directory could not be loaded</h2>
+      <p>Please try again.</p>
+      <button class="btn-primary" type="button" (click)="loadDirectory()">Retry loading</button>
+    </div>
+  } @else {
+    <div class="directory-layout" [attr.aria-busy]="state() === 'loading'">
+      <section aria-labelledby="featured-title">
+        <div class="section-heading">
+          <h2 id="featured-title">Featured companies</h2>
+          <a class="text-action" routerLink="/companies"
+            >View all companies <span aria-hidden="true">&#8594;</span></a
+          >
+        </div>
+        @if (state() === 'loading') {
+          <div class="company-grid" aria-label="Loading companies">
+            @for (item of [1, 2, 3, 4]; track item) {
+              <div class="loading-card" aria-hidden="true">
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            }
+          </div>
+        } @else if (featured().length) {
+          <div class="company-grid">
+            @for (company of featured(); track company.id) {
+              <app-company-card [company]="company" />
+            }
+          </div>
+        } @else {
+          <p class="load-message">No company profiles are available yet.</p>
+        }
+      </section>
+
+      <section class="categories" aria-labelledby="category-title">
+        <div class="section-heading"><h2 id="category-title">Explore by category</h2></div>
+        @if (state() === 'loading') {
+          <p role="status">Loading categories...</p>
+        } @else if (categories().length) {
+          <ul class="category-list">
+            @for (category of categories(); track category.id) {
+              <li>
+                <a [routerLink]="['/categories', category.slug]">
+                  <span>{{ category.name }}</span>
+                  <span
+                    class="preview-count"
+                    [attr.aria-label]="(categoryCounts().get(category.slug) ?? 0) + ' companies'"
+                  >
+                    {{ categoryCounts().get(category.slug) ?? 0 }}
+                  </span>
+                </a>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p>No categories are available yet.</p>
+        }
+      </section>
+    </div>
+  }
+
+  <section class="discovery" aria-labelledby="discovery-title">
+    <div>
+      <p class="section-label">Go beyond the directory</p>
+      <h2 id="discovery-title">Discover a company</h2>
+      <p>One discovery search and one URL analysis per day with an account.</p>
+    </div>
+    <div class="discovery-actions">
+      @if (auth.isAuthenticated()) {
+        <a class="btn-primary" routerLink="/dashboard/discovery">Discover companies</a>
+        <a class="text-action" routerLink="/dashboard/ai-analysis"
+          >Analyze a URL <span aria-hidden="true">&#8594;</span></a
+        >
+      } @else {
+        <a class="btn-primary" routerLink="/dashboard/register">Create account</a>
+        <a class="text-action" routerLink="/dashboard/login"
+          >Sign in <span aria-hidden="true">&#8594;</span></a
+        >
+      }
+    </div>
+  </section>
+</div>

@@ -7,13 +7,14 @@ import { AuthService } from '../../../core/auth/auth.service';
   selector: 'app-register-page',
   imports: [FormsModule, RouterLink],
   template: `
-    <section class="page-hero page-hero-media hero-bg-dashboard-auth">
-      <div class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+    <section class="page-hero">
+      <div class="auth-layout">
         <div>
-          <p class="eyebrow">Dashboard registration</p>
-          <h1 class="mt-4 text-4xl font-semibold text-slate-950">Create a dashboard account.</h1>
+          <p class="eyebrow">Contributor access</p>
+          <h1 class="mt-4 text-4xl font-semibold text-slate-950">Create your Vensight account</h1>
           <p class="mt-4 max-w-xl text-base leading-7 text-slate-600">
-            New accounts start as users with read-only dashboard access. Admins can add developer accounts.
+            Get one company discovery search and one URL analysis per day. Publishing listings
+            requires developer or admin access.
           </p>
         </div>
 
@@ -21,17 +22,41 @@ import { AuthService } from '../../../core/auth/auth.service';
           <div class="grid gap-5">
             <label class="block">
               <span class="text-sm font-semibold text-slate-900">Email</span>
-              <input class="form-input" type="email" autocomplete="email" name="email" [ngModel]="email()" (ngModelChange)="email.set($event)" />
+              <input
+                class="form-input"
+                type="email"
+                required
+                autocomplete="email"
+                name="email"
+                [ngModel]="email()"
+                (ngModelChange)="email.set($event)"
+              />
             </label>
 
             <label class="block">
               <span class="text-sm font-semibold text-slate-900">Password</span>
-              <input class="form-input" type="password" autocomplete="new-password" name="password" [ngModel]="password()" (ngModelChange)="password.set($event)" />
+              <input
+                class="form-input"
+                type="password"
+                required
+                autocomplete="new-password"
+                name="password"
+                [ngModel]="password()"
+                (ngModelChange)="password.set($event)"
+              />
             </label>
 
             <label class="block">
               <span class="text-sm font-semibold text-slate-900">Confirm password</span>
-              <input class="form-input" type="password" autocomplete="new-password" name="confirmPassword" [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" />
+              <input
+                class="form-input"
+                type="password"
+                required
+                autocomplete="new-password"
+                name="confirmPassword"
+                [ngModel]="confirmPassword()"
+                (ngModelChange)="confirmPassword.set($event)"
+              />
             </label>
           </div>
 
@@ -42,16 +67,10 @@ import { AuthService } from '../../../core/auth/auth.service';
           }
 
           <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button
-              type="submit"
-              class="btn-primary focus-ring"
-              [disabled]="isSubmitting()"
-            >
+            <button type="submit" class="btn-primary focus-ring" [disabled]="isSubmitting()">
               {{ isSubmitting() ? 'Creating...' : 'Create account' }}
             </button>
-            <a routerLink="/dashboard/login" class="return-link focus-ring">
-              Back to sign in
-            </a>
+            <a routerLink="/dashboard/login" class="return-link focus-ring"> Back to sign in </a>
           </div>
         </form>
       </div>

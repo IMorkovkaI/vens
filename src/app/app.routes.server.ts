@@ -42,6 +42,11 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    // Auth state is restored in the browser, as on the other workspace routes.
+    path: 'dashboard/discovery',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'dashboard/analytics',
     renderMode: RenderMode.Client,
   },

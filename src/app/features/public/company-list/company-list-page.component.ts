@@ -12,24 +12,22 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
   imports: [CompanyCardComponent, FormsModule, RouterLink],
   template: `
     <section class="page-hero">
-      <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+      <div class="site-container directory-intro">
         <p class="eyebrow">Company listing</p>
-        <div class="mt-4 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+        <div class="directory-title-row">
           <div>
-            <h1 class="text-4xl font-semibold text-slate-950">Browse companies</h1>
-            <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
+            <h1>Browse companies</h1>
+            <p class="directory-intro-copy">
               Search the seeded demo directory by company, category, summary, and tags.
             </p>
           </div>
-          <a routerLink="/" class="return-link focus-ring">
-            Back to home
-          </a>
+          <a routerLink="/" class="return-link focus-ring"> Back to home </a>
         </div>
       </div>
     </section>
 
-    <section class="page-visual-band visual-bg-companies">
-      <div class="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+    <section class="page-content">
+      <div class="site-container py-8">
         <div class="directory-search-panel">
           <div class="directory-search-row">
             <label class="block">
@@ -43,29 +41,19 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
               />
             </label>
 
-            <div>
-              <p class="text-sm font-semibold text-slate-900">Category</p>
-              <div class="mt-2 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  class="filter-chip focus-ring"
-                  [class.filter-chip-active]="!categorySlug()"
-                  (click)="setCategory('')"
-                >
-                  All
-                </button>
+            <label class="block">
+              <span class="text-sm font-semibold text-slate-900">Category</span>
+              <select
+                class="form-input"
+                [ngModel]="categorySlug()"
+                (ngModelChange)="setCategory($event)"
+              >
+                <option value="">All categories</option>
                 @for (category of categories(); track category.id) {
-                  <button
-                    type="button"
-                    class="filter-chip focus-ring"
-                    [class.filter-chip-active]="categorySlug() === category.slug"
-                    (click)="setCategory(category.slug)"
-                  >
-                    {{ category.name }}
-                  </button>
+                  <option [value]="category.slug">{{ category.name }}</option>
                 }
-              </div>
-            </div>
+              </select>
+            </label>
           </div>
 
           <div class="directory-search-meta">
@@ -85,7 +73,7 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
         </div>
 
         @if (isLoading()) {
-          <div class="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div class="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             @for (item of loadingCards; track item) {
               <div class="h-72 skeleton"></div>
             }
@@ -98,14 +86,15 @@ import { CompanyCardComponent } from '../../../shared/company-card/company-card.
           <div class="mt-6 empty-state p-10">
             <h2 class="text-lg font-semibold text-slate-950">No companies found</h2>
             <p class="mt-2 text-sm text-slate-600">
-              Try a broader term, clear the category filter, or search for workflows like analytics, security, or operations.
+              Try a broader term, clear the category filter, or search for workflows like analytics,
+              security, or operations.
             </p>
             <button type="button" class="btn-secondary focus-ring mt-5" (click)="clearFilters()">
               Reset search
             </button>
           </div>
         } @else {
-          <div class="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div class="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             @for (company of companies(); track company.id) {
               <app-company-card [company]="company" />
             }

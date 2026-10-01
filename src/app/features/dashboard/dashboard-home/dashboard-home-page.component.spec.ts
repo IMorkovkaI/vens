@@ -54,10 +54,8 @@ describe('DashboardHomePageComponent', () => {
     expect(compiled.textContent).toContain('admin@vensight.local');
     expect(compiled.textContent).toContain('Assigned role: admin');
     expect(compiled.textContent).toContain('NovaLens');
-    expect(compiled.textContent).toContain('Analytics');
     expect(compiled.textContent).toContain('Discovery');
-    expect(compiled.textContent).toContain('AI Analysis');
+    expect(compiled.textContent).toContain('Add company');
     expect(compiled.textContent).toContain('Edit listing');
-    expect(compiled.textContent).toContain('Developers');
   });
 });

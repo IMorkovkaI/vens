@@ -1,5 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Company } from '../../../core/company-directory/company-directory.models';
 import { CompanyDirectoryService } from '../../../core/company-directory/company-directory.service';
@@ -8,8 +8,10 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
   selector: 'app-dashboard-home-page',
   imports: [RouterLink],
   template: `
-    <section class="page-hero page-hero-media hero-bg-dashboard-app">
-      <div class="mx-auto flex max-w-7xl flex-col justify-between gap-6 px-6 py-10 lg:flex-row lg:items-end lg:px-8">
+    <section class="page-hero">
+      <div
+        class="mx-auto flex max-w-7xl flex-col justify-between gap-6 px-6 py-10 lg:flex-row lg:items-end lg:px-8"
+      >
         <div>
           <p class="eyebrow">Dashboard</p>
           <h1 class="mt-3 text-4xl font-semibold text-slate-950">Directory workspace</h1>
@@ -22,56 +24,32 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
             </span>
           </div>
         </div>
-        <div class="flex flex-col gap-3 sm:flex-row">
-          <a routerLink="/dashboard/analytics" class="btn-subtle focus-ring">
-            Analytics
-          </a>
+        <div class="flex flex-wrap gap-3">
+          <a routerLink="/dashboard/discovery" class="btn-secondary">Discovery</a>
           @if (authService.canManageListings()) {
-            <a routerLink="/dashboard/discovery" class="btn-secondary focus-ring px-4 py-2">
-              Discovery
-            </a>
-            <a routerLink="/dashboard/ai-analysis" class="btn-secondary focus-ring px-4 py-2">
-              AI Analysis
-            </a>
-            <a routerLink="/dashboard/companies/new" class="btn-primary focus-ring px-4 py-2">
-              Add company
-            </a>
+            <a routerLink="/dashboard/companies/new" class="btn-primary">Add company</a>
           }
-          @if (authService.canManageDevelopers()) {
-            <a routerLink="/dashboard/developers" class="btn-subtle focus-ring">
-              Developers
-            </a>
-          }
-          <button
-            type="button"
-            class="btn-subtle focus-ring"
-            (click)="logout()"
-          >
-            Sign out
-          </button>
         </div>
       </div>
     </section>
 
     <section class="mx-auto max-w-7xl px-6 py-8 lg:px-8">
       @if (isLoading()) {
-        <div class="grid gap-4 md:grid-cols-3">
+        <div class="metric-strip three">
           @for (item of loadingCards; track item) {
             <div class="h-32 skeleton"></div>
           }
         </div>
       } @else if (hasError()) {
-        <div class="status-error" role="alert">
-          Dashboard data could not be loaded.
-        </div>
+        <div class="status-error" role="alert">Dashboard data could not be loaded.</div>
       } @else {
-        <div class="grid gap-4 md:grid-cols-3">
+        <div class="metric-strip three">
           <article class="metric-card">
             <p class="text-sm font-medium text-slate-500">Companies</p>
             <p class="mt-2 text-3xl font-semibold text-slate-950">{{ companies().length }}</p>
           </article>
           <article class="metric-card">
-            <p class="text-sm font-medium text-slate-500">Mock AI summaries</p>
+            <p class="text-sm font-medium text-slate-500">AI summaries</p>
             <p class="mt-2 text-3xl font-semibold text-slate-950">{{ aiSummaryCount() }}</p>
           </article>
           <article class="metric-card">
@@ -93,21 +71,28 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
           </div>
 
           @if (!companies().length) {
-            <div class="p-8 text-center text-sm text-slate-600">No companies are available yet.</div>
+            <div class="p-8 text-center text-sm text-slate-600">
+              No companies are available yet.
+            </div>
           } @else {
             <div class="divide-y divide-slate-200">
               @for (company of companies(); track company.id) {
                 <div class="grid gap-3 p-5 sm:grid-cols-[1fr_auto] sm:items-center">
                   <div>
                     <p class="font-semibold text-slate-950">{{ company.name }}</p>
-                    <p class="mt-1 text-sm text-slate-600">{{ company.category.name }} - {{ company.tags.join(', ') }}</p>
+                    <p class="mt-1 text-sm text-slate-600">
+                      {{ company.category.name }} - {{ company.tags.join(', ') }}
+                    </p>
                   </div>
                   <div class="flex flex-wrap gap-3">
                     <a [routerLink]="['/companies', company.slug]" class="text-link focus-ring">
                       View public profile
                     </a>
                     @if (authService.canManageListings()) {
-                      <a [routerLink]="['/dashboard/companies', company.slug, 'edit']" class="text-link focus-ring">
+                      <a
+                        [routerLink]="['/dashboard/companies', company.slug, 'edit']"
+                        class="text-link focus-ring"
+                      >
                         Edit listing
                       </a>
                     }
@@ -130,7 +115,6 @@ export class DashboardHomePageComponent implements OnInit {
   constructor(
     protected readonly authService: AuthService,
     private readonly companyDirectory: CompanyDirectoryService,
-    private readonly router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -152,10 +136,5 @@ export class DashboardHomePageComponent implements OnInit {
 
   protected categoryCount(): number {
     return new Set(this.companies().map((company) => company.category.slug)).size;
-  }
-
-  protected logout(): void {
-    this.authService.logout();
-    void this.router.navigateByUrl('/dashboard/login');
   }
 }

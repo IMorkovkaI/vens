@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Company } from '../../core/company-directory/company-directory.models';
 
@@ -6,62 +6,41 @@ import { Company } from '../../core/company-directory/company-directory.models';
   selector: 'app-company-card',
   imports: [RouterLink],
   template: `
-    <article class="company-card group h-full surface-card p-5 pt-6">
-      <div class="flex items-start justify-between gap-4">
-        <div class="flex min-w-0 items-start gap-3">
-          <span class="category-icon shrink-0" aria-hidden="true">{{ companyInitials() }}</span>
-          <div class="min-w-0">
-          <a [routerLink]="['/categories', company.category.slug]" class="eyebrow focus-ring rounded-sm text-xs">
-            {{ company.category.name }}
-          </a>
-          <h3 class="mt-2 text-xl font-semibold text-slate-950">
-            <a [routerLink]="['/companies', company.slug]" class="focus-ring rounded-sm">
-              {{ company.name }}
-            </a>
+    <article>
+      <div class="card-heading">
+        <span class="company-initial" aria-hidden="true">{{ company().name.charAt(0) }}</span>
+        <div>
+          <a class="category" [routerLink]="['/categories', company().category.slug]">{{
+            company().category.name
+          }}</a>
+          <h3>
+            <a [routerLink]="['/companies', company().slug]">{{ company().name }}</a>
           </h3>
-          <p class="mt-1 truncate text-xs font-bold uppercase text-slate-500">
-            {{ domainLabel() }}
-          </p>
-          </div>
         </div>
-        <span class="pill-outline shrink-0">Profile</span>
       </div>
-
-      <p class="mt-4 text-sm leading-6 text-slate-600">
-        {{ company.description }}
-      </p>
-
-      <p class="insight-quote mt-4 text-sm leading-6">
-        {{ company.aiSummary }}
-      </p>
-
-      <div class="mt-5 flex flex-wrap gap-2">
-        @for (tag of company.tags.slice(0, 4); track tag) {
-          <span class="pill">
-            {{ tag }}
-          </span>
+      <p class="description">{{ company().description }}</p>
+      @if (company().aiSummary) {
+        <div class="summary">
+          <p class="label">Company brief</p>
+          <p>{{ company().aiSummary }}</p>
+        </div>
+      }
+      <ul aria-label="Tags">
+        @for (tag of company().tags; track tag) {
+          <li>{{ tag }}</li>
         }
-      </div>
+      </ul>
+      <a
+        class="profile-link"
+        [routerLink]="['/companies', company().slug]"
+        [attr.aria-label]="'View ' + company().name + ' profile'"
+      >
+        View profile <span aria-hidden="true">&#8594;</span>
+      </a>
     </article>
   `,
+  styleUrl: './company-card.component.css',
 })
 export class CompanyCardComponent {
-  @Input({ required: true }) company!: Company;
-
-  protected companyInitials(): string {
-    return this.company.name
-      .split(/\s+/)
-      .map((part) => part.charAt(0))
-      .join('')
-      .slice(0, 2)
-      .toUpperCase();
-  }
-
-  protected domainLabel(): string {
-    try {
-      return new URL(this.company.website).hostname.replace(/^www\./, '');
-    } catch {
-      return this.company.website;
-    }
-  }
+  readonly company = input.required<Company>();
 }

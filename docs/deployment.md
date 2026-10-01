@@ -143,6 +143,13 @@ After deployment, verify:
 
 ## Remaining Production Work
 
+- The approved UKO redesign is in the production routes. Temporary preview routes, proposal assets, and review screenshots have been removed. `.vercelignore` and `.dockerignore` exclude local secrets and review tooling from uploads.
+- Cleanup validation: 97 API tests and 45 browser tests pass; typecheck, Prisma validation, and production build pass. The initial bundle is 516.66 kB, above the existing 500 kB warning threshold.
+- Release security gate: `npm audit --omit=dev` reports 18 advisories (11 high, 6 moderate, 1 low). A dependency remediation pass is pending; only `npm audit fix --dry-run` was run, with no dependency changes. Do not use `npm audit fix --force`, which proposes a breaking Prisma downgrade. No configured secret values were found in built production artifacts.
+- Current deployment is not completed: authenticate the local Vercel CLI with `npx vercel login`, link the existing Vensight project, and deploy with `npx vercel --prod`. Do not create a replacement project.
+- Supabase checks currently reject the configured connection with `tenant/user not found`. Confirm the project is active and replace the local `DIRECT_URL` with the session-pooler connection from its Connect panel before rechecking migrations/RLS. This redesign itself adds no migrations and needs no seed/reset operation.
+- The local Express SSR server has an existing CSP compatibility issue: `script-src 'self'` blocks Angular-generated inline bootstrap scripts. Verify the actual Vercel output before release; use nonce/hash support if needed, not a broad `unsafe-inline` script exception.
+
 - Set a strong `SEEDED_ADMIN_PASSWORD` before production seeding, or replace seeded admin with an invite/onboarding flow.
 - Token refresh is implemented for HttpOnly browser sessions and bearer-compatible API clients. Consider shorter TTLs before larger-scale real-user traffic.
 - GitHub Actions CI runs `prisma:validate`, `typecheck`, `test`, and `build`.

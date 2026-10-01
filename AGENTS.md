@@ -10,7 +10,7 @@ Build an Angular SSR business directory with a Node.js backend and AI-assisted c
 - Prefer small vertical slices over big rewrites.
 - Add loading, error, and empty states for UI.
 - Do not call paid AI APIs by default. Use mock AI unless AI_PROVIDER=real.
-- for styling use golden pages concept of website.
+- Follow the approved UKO Figma system in DESIGN.md: Geist, solid surfaces, and shared controls. Use the approved blue Geist V logo and favicon; do not restore the golden theme.
 - Ask everything is anything is unclear.
 
 ## Commands

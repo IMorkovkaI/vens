@@ -14,25 +14,25 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
   selector: 'app-ai-analysis-page',
   imports: [FormsModule, RouterLink],
   template: `
-    <section class="page-hero page-hero-media hero-bg-dashboard-app">
+    <section class="page-hero">
       <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <a routerLink="/dashboard" class="return-link focus-ring">
-          Back to dashboard
-        </a>
+        <a routerLink="/dashboard" class="return-link focus-ring"> Back to dashboard </a>
         <p class="mt-6 eyebrow">AI analysis</p>
         <h1 class="mt-3 text-4xl font-semibold text-slate-950">Analyze a company URL</h1>
         <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-          Generate a cached company profile from a URL. Registered accounts can run one URL analysis per day; developers and admins can create listings.
+          Generate a cached company profile from a URL. Registered accounts can run one URL analysis
+          per day; developers and admins can create listings.
         </p>
       </div>
     </section>
 
-    <section class="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[420px_1fr] lg:px-8">
+    <section class="mx-auto grid max-w-7xl gap-6 px-6 py-8 tool-layout lg:px-8">
       @if (!authService.canUseContributorTools()) {
         <div class="status-warning p-6 lg:col-span-2">
           <h2 class="text-lg font-semibold text-slate-950">Sign in required</h2>
           <p class="mt-2 text-sm leading-6 text-slate-700">
-            Registered accounts can run one AI URL analysis per day. Developers and admins can turn reviewed analyses into public listings.
+            Registered accounts can run one AI URL analysis per day. Developers and admins can turn
+            reviewed analyses into public listings.
           </p>
         </div>
       } @else {
@@ -153,7 +153,9 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
                     class="category-tile w-full text-left text-sm focus-ring"
                     (click)="selectAnalysis(analysis)"
                   >
-                    <span class="block font-semibold text-slate-950">{{ analysis.formData.name }}</span>
+                    <span class="block font-semibold text-slate-950">{{
+                      analysis.formData.name
+                    }}</span>
                     <span class="mt-1 block text-slate-600">{{ analysis.hostname }}</span>
                   </button>
                 }
@@ -166,8 +168,9 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
           @if (!analysisResult()) {
             <div class="empty-state p-10">
               <h2 class="text-xl font-semibold text-slate-950">Analysis preview</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-600">
-                Enter a company URL to generate a provider-backed profile. Registered accounts have a daily contributor limit.
+              <p class="mt-2 text-sm leading-6 text-slate-600">
+                Enter a company URL to generate a provider-backed profile. Registered accounts have
+                a daily contributor limit.
               </p>
             </div>
           } @else {
@@ -190,33 +193,37 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
                       [disabled]="isCreating() || createdCompany() !== null"
                       (click)="createListing()"
                     >
-                      {{ isCreating() ? 'Creating...' : createdCompany() ? 'Listing created' : 'Create listing' }}
+                      {{
+                        isCreating()
+                          ? 'Creating...'
+                          : createdCompany()
+                            ? 'Listing created'
+                            : 'Create listing'
+                      }}
                     </button>
                   } @else {
-                    <span class="pill-outline">
-                      Contributor preview
-                    </span>
+                    <span class="pill-outline"> Contributor preview </span>
                   }
                 </div>
               </div>
 
               <div class="grid gap-6 p-6">
                 <section>
-                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Description</h3>
+                  <h3 class="text-sm font-semibold  text-slate-500">Description</h3>
                   <p class="mt-2 text-base leading-7 text-slate-700">
                     {{ analysisResult()?.formData?.description }}
                   </p>
                 </section>
 
                 <section>
-                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">AI summary</h3>
+                  <h3 class="text-sm font-semibold  text-slate-500">AI summary</h3>
                   <p class="insight-quote mt-2 text-base leading-7">
                     {{ analysisResult()?.formData?.aiSummary }}
                   </p>
                 </section>
 
                 <section>
-                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">SEO description</h3>
+                  <h3 class="text-sm font-semibold  text-slate-500">SEO description</h3>
                   <p class="mt-2 text-base leading-7 text-slate-700">
                     {{ analysisResult()?.formData?.seoDescription }}
                   </p>
@@ -224,13 +231,13 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
 
                 <section class="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Category slug</h3>
+                    <h3 class="text-sm font-semibold  text-slate-500">Category slug</h3>
                     <p class="mt-2 text-sm font-semibold text-slate-950">
                       {{ analysisResult()?.formData?.categorySlug }}
                     </p>
                   </div>
                   <div>
-                    <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Tags</h3>
+                    <h3 class="text-sm font-semibold  text-slate-500">Tags</h3>
                     <div class="mt-2 flex flex-wrap gap-2">
                       @for (tag of analysisResult()?.formData?.tags ?? []; track tag) {
                         <span class="pill">
@@ -243,19 +250,19 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
 
                 <section class="grid gap-4 surface-muted p-4 sm:grid-cols-3">
                   <div>
-                    <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Provider</h3>
+                    <h3 class="text-xs font-semibold  text-slate-500">Provider</h3>
                     <p class="mt-1 text-sm font-semibold text-slate-950">
                       {{ analysisResult()?.provider }}
                     </p>
                   </div>
                   <div>
-                    <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Model</h3>
+                    <h3 class="text-xs font-semibold  text-slate-500">Model</h3>
                     <p class="mt-1 text-sm font-semibold text-slate-950">
                       {{ analysisResult()?.model }}
                     </p>
                   </div>
                   <div>
-                    <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Confidence</h3>
+                    <h3 class="text-xs font-semibold  text-slate-500">Confidence</h3>
                     <p class="mt-1 text-sm font-semibold text-slate-950">
                       {{ confidenceLabel() }}
                     </p>
@@ -264,7 +271,7 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
 
                 @if (analysisResult()?.source) {
                   <section class="surface-muted p-4">
-                    <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Source extraction</h3>
+                    <h3 class="text-sm font-semibold  text-slate-500">Source extraction</h3>
                     <div class="mt-3 grid gap-3 text-sm sm:grid-cols-3">
                       <p>
                         <span class="block font-semibold text-slate-500">Status</span>
@@ -301,7 +308,10 @@ import { CompanyDirectoryService } from '../../../core/company-directory/company
                 @if (createdCompany()) {
                   <div class="status-success">
                     Created listing for {{ createdCompany()?.name }}.
-                    <a [routerLink]="['/companies', createdCompany()?.slug]" class="font-semibold underline">
+                    <a
+                      [routerLink]="['/companies', createdCompany()?.slug]"
+                      class="font-semibold underline"
+                    >
                       View public profile
                     </a>
                   </div>

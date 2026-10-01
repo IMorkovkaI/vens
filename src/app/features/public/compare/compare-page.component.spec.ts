@@ -102,5 +102,17 @@ describe('ComparePageComponent', () => {
     expect(text).toContain('87% confidence');
     expect(text).toContain('Decision notes');
     expect(text).toContain('Vensight comparison engine');
+    const panels = fixture.nativeElement.querySelectorAll(
+      '.comparison-company',
+    ) as NodeListOf<HTMLElement>;
+    expect(panels.length).toBe(2);
+    panels.forEach((panel, index) => {
+      expect(panel.querySelector('.eyebrow')?.textContent).toContain(`Company ${index + 1}`);
+      const heading = panel.querySelector('h3');
+      expect(heading?.textContent).toContain(companies[index].name);
+      expect(panel.getAttribute('aria-labelledby')).toBe(heading?.id ?? null);
+      expect(panel.querySelectorAll('li').length).toBe(1);
+      expect(panel.textContent).not.toContain('Decision notes');
+    });
   });
 });

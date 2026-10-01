@@ -9,25 +9,25 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
   selector: 'app-discovery-page',
   imports: [FormsModule, RouterLink],
   template: `
-    <section class="page-hero page-hero-media hero-bg-dashboard-app">
+    <section class="page-hero">
       <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <a routerLink="/dashboard" class="return-link focus-ring">
-          Back to dashboard
-        </a>
+        <a routerLink="/dashboard" class="return-link focus-ring"> Back to dashboard </a>
         <p class="mt-6 eyebrow">Discovery</p>
         <h1 class="mt-3 text-4xl font-semibold text-slate-950">Find listing candidates</h1>
         <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-          Find public company websites, inspect the source, then send the best match into AI analysis before creating a listing.
+          Find public company websites, inspect the source, then send the best match into AI
+          analysis before creating a listing.
         </p>
       </div>
     </section>
 
-    <section class="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[420px_1fr] lg:px-8">
+    <section class="mx-auto grid max-w-7xl gap-6 px-6 py-8 tool-layout lg:px-8">
       @if (!authService.canUseContributorTools()) {
         <div class="status-warning p-6 lg:col-span-2">
           <h2 class="text-lg font-semibold text-slate-950">Sign in required</h2>
           <p class="mt-2 text-sm leading-6 text-slate-700">
-            Registered accounts can run one discovery search per day. Developers and admins can search without the daily contributor limit.
+            Registered accounts can run one discovery search per day. Developers and admins can
+            search without the daily contributor limit.
           </p>
         </div>
       } @else {
@@ -35,7 +35,8 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
           <form class="surface-card p-6" (ngSubmit)="search()">
             <h2 class="text-xl font-semibold text-slate-950">Find companies</h2>
             <p class="mt-2 text-sm leading-6 text-slate-600">
-              Use natural search terms. Registered accounts get one search per day; developer and admin accounts can review candidates without that limit.
+              Use natural search terms. Registered accounts get one search per day; developer and
+              admin accounts can review candidates without that limit.
             </p>
             <label class="mt-5 block">
               <span class="text-sm font-semibold text-slate-900">What are you looking for?</span>
@@ -44,7 +45,7 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
                 name="query"
                 [ngModel]="query()"
                 (ngModelChange)="query.set($event)"
-                placeholder="biotech companies, B2B SaaS tools, legaltech startups"
+                placeholder="e.g. biotech companies"
               />
             </label>
             <label class="mt-4 block">
@@ -93,13 +94,18 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
             <h2 class="text-xl font-semibold text-slate-950">Search availability</h2>
             @if (!providerEntries().length) {
               <p class="mt-4 text-sm leading-6 text-slate-600">
-                Search checks public web results from the configured discovery source. Availability appears after a search.
+                Search checks public web results from the configured discovery source. Availability
+                appears after a search.
               </p>
             } @else {
               <div class="mt-4 space-y-3">
                 @for (entry of providerEntries(); track entry.name) {
-                  <div class="flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white/70 p-3">
-                    <span class="text-sm font-semibold text-slate-950">{{ providerLabel(entry.name) }}</span>
+                  <div
+                    class="flex items-center justify-between gap-3 border-b border-slate-200 py-3"
+                  >
+                    <span class="text-sm font-semibold text-slate-950">{{
+                      providerLabel(entry.name)
+                    }}</span>
                     <span class="pill" [class.pill-outline]="entry.configured">
                       {{ entry.configured ? 'Available' : 'Not enabled' }}
                     </span>
@@ -111,21 +117,22 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
         </aside>
 
         <div class="space-y-6">
-          <article class="surface-card">
+          <article class="results-section">
             <div class="border-b border-slate-200 p-5">
               <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                 <div>
                   <h2 class="text-xl font-semibold text-slate-950">Search results</h2>
                   <p class="mt-1 text-sm text-slate-600">
-                    Search never creates listings directly. Open the source when you want to verify it, or analyze the URL when it looks relevant.
+                    Search never creates listings directly. Open the source when you want to verify
+                    it, or analyze the URL when it looks relevant.
                   </p>
                 </div>
-                <span class="pill">{{ results().length }} results</span>
+                <span class="pill shrink-0">{{ results().length }} results</span>
               </div>
             </div>
 
             @if (isSearching()) {
-              <div class="grid gap-4 p-5 md:grid-cols-2">
+              <div class="results-list">
                 @for (item of loadingCards; track item) {
                   <div class="h-36 skeleton"></div>
                 }
@@ -134,7 +141,8 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
               <div class="empty-state m-5 p-10">
                 <h3 class="text-lg font-semibold text-slate-950">Start with a search</h3>
                 <p class="mt-2 text-sm leading-6 text-slate-600">
-                  Use a specific industry, company type, or region to find better candidate websites.
+                  Use a specific industry, company type, or region to find better candidate
+                  websites.
                 </p>
               </div>
             } @else if (!results().length) {
@@ -145,9 +153,9 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
                 </p>
               </div>
             } @else {
-              <div class="grid gap-4 p-5 md:grid-cols-2">
+              <div class="results-list">
                 @for (result of results(); track result.url) {
-                  <article class="surface-card p-5">
+                  <article>
                     <div class="flex items-start justify-between gap-3">
                       <div>
                         <p class="text-sm font-semibold text-slate-950">{{ result.title }}</p>
@@ -161,7 +169,12 @@ import { DiscoveryService } from '../../../core/discovery/discovery.service';
                       {{ result.snippet || 'No snippet returned by provider.' }}
                     </p>
                     <div class="mt-5 flex flex-wrap gap-3">
-                      <a [href]="result.url" target="_blank" rel="noopener noreferrer" class="btn-subtle focus-ring px-3 py-2">
+                      <a
+                        [href]="result.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn-subtle focus-ring px-3 py-2"
+                      >
                         Open source
                       </a>
                       <button

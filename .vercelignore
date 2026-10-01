@@ -1,0 +1,26 @@
+# Upload only source and build inputs, never local secrets or review artifacts.
+.git
+.angular
+.codex
+.hallmark
+.vscode
+node_modules
+dist
+out-tsc
+generated
+tmp
+docs
+coverage
+playwright-report
+test-results
+**/*.log
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+supabase/.temp
+supabase/.branches
+AGENTS.md
+DESIGN.md
+PRODUCT.md

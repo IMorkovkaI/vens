@@ -8,11 +8,9 @@ import { AuthService } from '../../../core/auth/auth.service';
   selector: 'app-developers-page',
   imports: [FormsModule, RouterLink],
   template: `
-    <section class="page-hero page-hero-media hero-bg-dashboard-app">
+    <section class="page-hero">
       <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <a routerLink="/dashboard" class="return-link focus-ring">
-          Back to dashboard
-        </a>
+        <a routerLink="/dashboard" class="return-link focus-ring"> Back to dashboard </a>
         <p class="mt-6 eyebrow">Admin tools</p>
         <h1 class="mt-3 text-4xl font-semibold text-slate-950">Developers</h1>
         <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">
@@ -21,11 +19,13 @@ import { AuthService } from '../../../core/auth/auth.service';
       </div>
     </section>
 
-    <section class="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[420px_1fr] lg:px-8">
+    <section class="mx-auto grid max-w-7xl gap-6 px-6 py-8 tool-layout lg:px-8">
       @if (!authService.canManageDevelopers()) {
         <div class="status-warning p-6 lg:col-span-2">
           <h2 class="text-lg font-semibold text-slate-950">Admin access required</h2>
-          <p class="mt-2 text-sm leading-6 text-slate-700">Only admin accounts can add developers.</p>
+          <p class="mt-2 text-sm leading-6 text-slate-700">
+            Only admin accounts can add developers.
+          </p>
         </div>
       } @else {
         <form class="surface-card p-6" (ngSubmit)="submit()">
@@ -33,11 +33,23 @@ import { AuthService } from '../../../core/auth/auth.service';
           <div class="mt-5 grid gap-5">
             <label class="block">
               <span class="text-sm font-semibold text-slate-900">Email</span>
-              <input class="form-input" type="email" name="email" [ngModel]="email()" (ngModelChange)="email.set($event)" />
+              <input
+                class="form-input"
+                type="email"
+                name="email"
+                [ngModel]="email()"
+                (ngModelChange)="email.set($event)"
+              />
             </label>
             <label class="block">
               <span class="text-sm font-semibold text-slate-900">Temporary password</span>
-              <input class="form-input" type="password" name="password" [ngModel]="password()" (ngModelChange)="password.set($event)" />
+              <input
+                class="form-input"
+                type="password"
+                name="password"
+                [ngModel]="password()"
+                (ngModelChange)="password.set($event)"
+              />
             </label>
           </div>
 
@@ -53,11 +65,7 @@ import { AuthService } from '../../../core/auth/auth.service';
             </div>
           }
 
-          <button
-            type="submit"
-            class="mt-6 btn-primary focus-ring"
-            [disabled]="isSubmitting()"
-          >
+          <button type="submit" class="mt-6 btn-primary focus-ring" [disabled]="isSubmitting()">
             {{ isSubmitting() ? 'Adding...' : 'Add developer' }}
           </button>
         </form>
@@ -69,7 +77,9 @@ import { AuthService } from '../../../core/auth/auth.service';
           @if (isLoading()) {
             <div class="p-5 text-sm text-slate-600">Loading developers...</div>
           } @else if (!developers().length) {
-            <div class="p-8 text-center text-sm text-slate-600">No developers have been added yet.</div>
+            <div class="p-8 text-center text-sm text-slate-600">
+              No developers have been added yet.
+            </div>
           } @else {
             <div class="divide-y divide-slate-200">
               @for (developer of developers(); track developer.email) {

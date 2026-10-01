@@ -7,13 +7,13 @@ import { AuthService } from '../../../core/auth/auth.service';
   selector: 'app-login-page',
   imports: [FormsModule, RouterLink],
   template: `
-    <section class="page-hero page-hero-media hero-bg-dashboard-auth">
-      <div class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+    <section class="page-hero">
+      <div class="auth-layout">
         <div>
-          <p class="eyebrow">Dashboard authentication</p>
-          <h1 class="mt-4 text-4xl font-semibold text-slate-950">Sign in to manage the directory.</h1>
+          <p class="eyebrow">Your workspace</p>
+          <h1 class="mt-4 text-4xl font-semibold text-slate-950">Sign in to Vensight</h1>
           <p class="mt-4 max-w-xl text-base leading-7 text-slate-600">
-            Roles are assigned by account. Admins can invite developers and manage protected workflows.
+            Discover companies, analyze URLs, and continue your research.
           </p>
         </div>
 
@@ -24,11 +24,12 @@ import { AuthService } from '../../../core/auth/auth.service';
               <input
                 class="form-input"
                 type="email"
+                required
                 autocomplete="email"
                 name="email"
                 [ngModel]="email()"
                 (ngModelChange)="email.set($event)"
-                placeholder="admin@vensight.local"
+                placeholder="you@company.com"
               />
             </label>
 
@@ -37,6 +38,7 @@ import { AuthService } from '../../../core/auth/auth.service';
               <input
                 class="form-input"
                 type="password"
+                required
                 autocomplete="current-password"
                 name="password"
                 [ngModel]="password()"
@@ -44,7 +46,6 @@ import { AuthService } from '../../../core/auth/auth.service';
                 placeholder="At least 12 characters"
               />
             </label>
-
           </div>
 
           @if (errorMessage()) {
@@ -54,11 +55,7 @@ import { AuthService } from '../../../core/auth/auth.service';
           }
 
           <div class="mt-6 grid gap-3 sm:grid-cols-2">
-            <button
-              type="submit"
-              class="btn-primary focus-ring"
-              [disabled]="isSubmitting()"
-            >
+            <button type="submit" class="btn-primary focus-ring" [disabled]="isSubmitting()">
               {{ isSubmitting() ? 'Signing in...' : 'Sign in' }}
             </button>
             <a routerLink="/dashboard/register" class="btn-secondary focus-ring">
@@ -67,9 +64,7 @@ import { AuthService } from '../../../core/auth/auth.service';
           </div>
 
           <div class="mt-4">
-            <a routerLink="/" class="return-link focus-ring">
-              Return to public site
-            </a>
+            <a routerLink="/" class="return-link focus-ring"> Return to public site </a>
           </div>
         </form>
       </div>
